@@ -10,6 +10,8 @@ Phase 4 outbox and delivery reliability: [`audits/VELOR_PHASE_4_OUTBOX_DELIVERY_
 
 Phase 5 authentication and tenant isolation: [`audits/VELOR_PHASE_5_AUTHENTICATION_TENANT_ISOLATION_2026-07-22.md`](audits/VELOR_PHASE_5_AUTHENTICATION_TENANT_ISOLATION_2026-07-22.md).
 
+Phase 6 Egyptian Commerce AI Evaluation Suite: [`audits/VELOR_PHASE_6_EGYPTIAN_COMMERCE_AI_EVALUATION_2026-07-22.md`](audits/VELOR_PHASE_6_EGYPTIAN_COMMERCE_AI_EVALUATION_2026-07-22.md).
+
 The repository contains product contracts as well as historical engineering evidence. This index prevents an old phase report from being mistaken for the current product or launch verdict.
 
 ## Current launch authority
