@@ -445,12 +445,7 @@ async function initializeCompany(companyId) {
 
         const sender = msg.key.remoteJid;
         if (text.length > 800) {
-            await sock.sendMessage(sender, { text: LONG_MESSAGE_REPLY });
-            return;
-        }
-        if (text.length > 800) {
-            await sock.sendMessage(sender, { text: 'عفوًا، الرسالة طويلة جدًا. ممكن تلخصها؟' });
-            return;
+            logger.warn({ companyId, waMessageId: msg.key?.id, messageLength: text.length }, 'Forwarding long message to canonical backend path');
         }
 
         let backendReplyReturned = false;
@@ -488,18 +483,14 @@ async function initializeCompany(companyId) {
                 return;
             }
             logger.error({ companyId, waMessageId: msg.key?.id, errorType: errorType(err) }, 'Backend chat request failed');
-            try {
-                await sock.sendMessage(sender, { text: TECHNICAL_FALLBACK_REPLY });
-            } catch (fallbackErr) {
-                logger.error({ companyId, errorType: errorType(fallbackErr) }, 'Failed to send fallback message');
-            }
+            rememberDeliveryAttempt({
+                company_id: companyId,
+                jid: sender,
+                inbound_wa_message_id: msg.key?.id || null,
+                status: 'backend_unavailable_no_local_reply',
+                error_type: errorType(err),
+            });
             return;
-            logger.error({ companyId, errorType: errorType(err) }, 'Message pipeline failed');
-            try {
-                await sock.sendMessage(sender, { text: 'عذرًا، النظام يواجه ضغطًا تقنيًا حاليًا. يرجى المحاولة بعد قليل.' });
-            } catch (fallbackErr) {
-                logger.error({ companyId, errorType: errorType(fallbackErr) }, 'Failed to send fallback message');
-            }
         } finally {
             try { await sock.sendPresenceUpdate('paused', sender); } catch (e) {}
         }
@@ -702,19 +693,26 @@ async function gracefulShutdown(signal) {
     process.exit(0);
 }
 
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('uncaughtException', (err) => {
-    logger.error({ errorType: errorType(err) }, 'Uncaught exception');
-});
-process.on('unhandledRejection', (reason) => {
-    logger.error({ errorType: errorType(reason) }, 'Unhandled rejection');
-});
+function startGatewayServer() {
+    return app.listen(PORT, HOST, () => {
+        console.log('\n============================================');
+        console.log(`VELOR WhatsApp Gateway is listening on ${HOST}:${PORT}`);
+        console.log('============================================\n');
+        logger.warn(`Baileys Gateway running on ${HOST}:${PORT}`);
+        loadExistingSessions();
+    });
+}
 
-app.listen(PORT, HOST, () => {
-    console.log('\n============================================');
-    console.log(`VELOR WhatsApp Gateway is listening on ${HOST}:${PORT}`);
-    console.log('============================================\n');
-    logger.warn(`Baileys Gateway running on ${HOST}:${PORT}`);
-    loadExistingSessions();
-});
+if (require.main === module) {
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('uncaughtException', (err) => {
+        logger.error({ errorType: errorType(err) }, 'Uncaught exception');
+    });
+    process.on('unhandledRejection', (reason) => {
+        logger.error({ errorType: errorType(reason) }, 'Unhandled rejection');
+    });
+    startGatewayServer();
+}
+
+module.exports = { app, sessions, qrCodes, startGatewayServer };
