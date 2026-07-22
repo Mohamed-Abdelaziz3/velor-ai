@@ -443,20 +443,24 @@ const metricTones = {
     icon: { background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(251,146,60,0.1))', border: '1px solid rgba(245,158,11,0.2)', color: '#fcd34d' },
     glow: 'rgba(245,158,11,0.06)',
   },
+  red: {
+    icon: { background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.18)', color: '#fca5a5' },
+    glow: 'rgba(248,113,113,0.05)',
+  },
 };
 
 export function MetricCard({ label, value, detail, delta, icon: Icon, tone = 'purple', unavailable = false, children }) {
   const config = metricTones[tone] || metricTones.purple;
   return (
-    <Card className="group relative min-h-[160px] overflow-hidden p-4 sm:p-5" interactive>
+    <Card className="group relative min-h-[138px] overflow-hidden p-4 sm:p-5">
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium" style={{ color: '#6b6585' }}>{label}</p>
+          <p className="text-xs font-semibold text-velor-secondary">{label}</p>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={cx(
-              'metric-numbers mt-3 text-[1.7rem] font-black leading-none tracking-tight',
+              'metric-numbers mt-3 text-[1.8rem] font-black leading-none tracking-tight',
               unavailable ? 'text-[#3d3a52]' : 'text-white',
             )}
           >
@@ -465,7 +469,7 @@ export function MetricCard({ label, value, detail, delta, icon: Icon, tone = 'pu
         </div>
         {Icon && (
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
             style={config.icon}
           >
             <Icon className="h-4.5 w-4.5" style={{ color: config.icon.color }} aria-hidden="true" />
@@ -474,7 +478,7 @@ export function MetricCard({ label, value, detail, delta, icon: Icon, tone = 'pu
       </div>
 
       <div className="mt-3 flex min-h-5 items-center justify-between gap-2">
-        <span className="text-[11px]" style={{ color: '#6b6585' }}>{detail}</span>
+        <span className="text-[11px] leading-5 text-velor-muted">{detail}</span>
         {delta && (
           <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold" style={{
             borderColor: 'rgba(52,211,153,0.2)',
@@ -533,6 +537,12 @@ export function DataStateNotice({ title, description, action, tone = 'purple' })
       bg: 'linear-gradient(135deg, rgba(56,189,248,0.05), rgba(59,130,246,0.03))',
       iconBg: 'rgba(56,189,248,0.12)',
       iconColor: '#60a5fa',
+    },
+    warning: {
+      border: 'rgba(245,158,11,0.18)',
+      bg: 'rgba(245,158,11,0.055)',
+      iconBg: 'rgba(245,158,11,0.12)',
+      iconColor: '#fbbf24',
     },
   };
   const s = styles[tone] || styles.purple;

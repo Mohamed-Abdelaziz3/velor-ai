@@ -187,7 +187,7 @@ const WorkspaceContent = () => {
             </div>
 
             {briefOpen && (
-                <div className="fixed inset-0 z-40 flex items-end bg-black/60 backdrop-blur-[2px] xl:hidden" onMouseDown={(event) => event.target === event.currentTarget && closeBrief()}>
+                <div className="fixed inset-0 z-[70] flex items-end bg-black/72 backdrop-blur-sm xl:hidden" onMouseDown={(event) => event.target === event.currentTarget && closeBrief()}>
                     <motion.section
                         id="mobile-decision-brief"
                         ref={briefDialogRef}
@@ -197,7 +197,8 @@ const WorkspaceContent = () => {
                         tabIndex={-1}
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[22px] border border-velor-border bg-velor-panel shadow-2xl"
+                        className="flex max-h-[calc(100dvh-4.5rem)] w-full flex-col overflow-hidden rounded-t-[24px] border border-velor-border bg-velor-panel shadow-[0_-24px_100px_rgba(0,0,0,.7)]"
+                        style={{ marginBottom: 'max(0px, env(safe-area-inset-bottom))' }}
                     >
                         <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
                             <h2 id="mobile-decision-brief-title" className="text-sm font-bold text-white">ملخص القرار</h2>

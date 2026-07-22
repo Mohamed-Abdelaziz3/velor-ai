@@ -211,3 +211,81 @@ bf6a2e1b4e7701bfb08a569b5ab510580c2f48dd
 ```
 
 The focused Phase 7 commit hash is reported in the final handoff after commit creation; a Git commit cannot embed its own final hash.
+
+---
+
+## Authenticated completion and visual-shell refinement
+
+This completion pass was explicitly authorized after the first authenticated browser QA. It remains inside Phase 7 and does not start Phase 8.
+
+### Completion rollback checkpoint
+
+```text
+99f95cc9e06f755125bdd88802597cd5a15706b5
+```
+
+The worktree was clean at that checkpoint. Local synthetic demo records used to demonstrate populated states were returned to their original `is_test` boundary after QA, and temporary local access was rotated/disabled after each browser session.
+
+### Authenticated QA finding before edits
+
+Authenticated browser QA completed the protected-surface gap left in the original report. Dashboard, inbox, conversation preview, conversation workspace, evidence, escalation, loading, empty, and unauthorized behavior were inspected. At `390×844`, the mobile bottom navigation overlapped the decision dialog by 64 px and obscured evidence content.
+
+No code was changed during discovery. The defect was reported first, then the user explicitly authorized a focused Phase 7 visual refinement.
+
+### Navigation decision
+
+VELOR currently has four primary product destinations: follow-up center, conversations, channels, and evidence sources. A persistent 252 px sidebar consumed disproportionate workspace for that shallow information architecture.
+
+The refined shell therefore uses:
+
+- a compact horizontal product switcher in the desktop header;
+- a four-destination bottom dock on mobile;
+- one account menu for identity and sign-out;
+- the existing command palette for secondary/directly addressable routes.
+
+This follows the general design-system distinction that a simple product can use header navigation, while a side panel is more useful once navigation exceeds roughly five frequently switched secondary destinations or gains hierarchy.
+
+### Implemented in the completion pass
+
+- Removed the permanent desktop sidebar without removing any protected route.
+- Added a compact, RTL-aware desktop navigation switcher for the four validated product destinations.
+- Added a four-destination mobile dock with safe-area-aware placement.
+- Moved sign-out into an explicit account menu and removed the unavailable notification surface from the header.
+- Reduced decorative gradients, excessive glass effects, card radius, hover movement, and shadow weight.
+- Increased neutral contrast and made queue status colors more specific, including a true red attention state.
+- Removed misleading hover affordance from non-interactive metric cards.
+- Added a warning presentation for unavailable data instead of falling back to the brand-purple state.
+- Raised the mobile decision sheet above navigation and removed the parent stacking context that previously trapped its z-index.
+- Preserved dashboard, inbox, evidence, suggestion, escalation, takeover, send, persistence, API, and authentication behavior.
+
+### Browser-demonstrated flows
+
+- Authenticated dashboard at `1440×1000`: compact header navigation, populated priority queue, operational metrics, no horizontal overflow (`scrollWidth = 1440`).
+- Authenticated dashboard at `390×844`: mobile header and bottom dock, no horizontal overflow (`scrollWidth = 390`).
+- Authenticated inbox at `1440×1000`: three-column list, read-only conversation preview, evidence-oriented call to action, no horizontal overflow.
+- Authenticated inbox at `390×844`: list state, selected-conversation preview, bottom dock at `top = 764`, `bottom = 832`.
+- Authenticated conversation workspace at `390×844`: suggestion and manual-control surfaces rendered without horizontal overflow.
+- Mobile decision dialog at `390×844`: escalation state, missing information, known facts, next action, rationale, and evidence rendered above the navigation dock. A hit test at the former overlap point resolved inside the dialog and not inside mobile navigation.
+- Loading and empty states were visually inspected, and the unauthorized protected-route redirect was verified. Error copy remains covered by the component contract/source, but an authenticated runtime failure screen was not replayed after the visual defect interrupted the first QA pass. No production provider or customer interaction was performed.
+
+### Status separation after completion
+
+#### Implemented
+
+Yes, for the Phase 7 frontend shell, presentation components, and the documented mobile modal defect.
+
+#### Tested
+
+Yes, through frontend contract tests, ESLint, production build, whitespace checks, and authenticated browser QA. Exact final command results are included in the handoff.
+
+#### Demonstrated
+
+Yes, for local authenticated synthetic demo states on desktop and mobile. This is product-surface evidence, not production traffic evidence.
+
+#### Production-ready
+
+**Not claimed.** Local authenticated QA does not establish deployment, provider, operational, or production data readiness.
+
+#### Market evidence
+
+**None produced or claimed.** No customer outcomes, logos, testimonials, acceptance rates, or synthetic metrics were presented as market evidence.

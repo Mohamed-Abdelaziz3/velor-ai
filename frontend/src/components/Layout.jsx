@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Bell, Command, Menu, Search, UserRound, X } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronDown, Command, LogOut, Search, UserRound, X } from 'lucide-react';
 import Sidebar from './Sidebar';
-import api from '../services/api';
-import { Badge } from './velor/ui';
-import { VelorMark } from './velor/VelorLogo';
+import api, { logout } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import { VelorLogo, VelorMark } from './velor/VelorLogo';
 
 const commandItems = [
   { label: 'افتح مركز المتابعة',            path: '/dashboard',   keywords: 'الرئيسية ملخص مؤشرات overview metrics home' },
@@ -26,24 +26,13 @@ const routeNames = {
   billing:     'الاشتراك والفوترة',
 };
 
-const routeIcons = {
-  dashboard:   '⚡',
-  inbox:       '💬',
-  analytics:   '📊',
-  automations: '🤖',
-  onboarding:  '⚙️',
-  settings:    '⚙️',
-  billing:     '💳',
-};
-
 export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logoutUser } = useAuth();
   const searchRef = useRef(null);
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
-  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [profile, setProfile] = useState({ company_name: 'مساحة عمل VELOR', email: '' });
   const [activeIdx, setActiveIdx] = useState(-1);
@@ -60,7 +49,7 @@ export default function Layout() {
       }
       if (event.key === 'Escape') {
         setCommandOpen(false);
-        setNotificationOpen(false);
+        setProfileOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -86,6 +75,17 @@ export default function Layout() {
     setQuery('');
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // Clear the client session even when the server is unreachable.
+    } finally {
+      logoutUser();
+      navigate('/login');
+    }
+  };
+
   const handleCommandKeyDown = (event) => {
     if (!filteredCommands.length) return;
     if (event.key === 'ArrowDown') {
@@ -104,171 +104,85 @@ export default function Layout() {
   const isWorkspaceDetail = /^\/inbox(\/.*)?\/?$/.test(location.pathname);
 
   return (
-    <div className="flex h-screen overflow-hidden text-[#f0eeff]" dir="rtl" lang="ar" style={{ background: 'var(--velor-bg)' }}>
-      <Sidebar
-        collapsed={collapsed}
-        onToggle={() => setCollapsed((value) => !value)}
-        mobileOpen={mobileOpen}
-        onMobileClose={() => setMobileOpen(false)}
-      />
-
+    <div className="flex h-screen overflow-hidden text-velor-text" dir="rtl" lang="ar" style={{ background: 'var(--velor-bg)' }}>
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-        {/* Ambient background — very subtle, just adds warmth */}
         <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-          <div className="absolute -right-48 -top-64 h-[500px] w-[500px] rounded-full opacity-40 blur-[200px]"
-            style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)' }} />
+          <div className="absolute -right-52 -top-72 h-[560px] w-[560px] rounded-full bg-violet-500/[0.055] blur-[190px]" />
+          <div className="absolute -bottom-72 -left-48 h-[480px] w-[480px] rounded-full bg-sky-500/[0.035] blur-[180px]" />
         </div>
 
-        {/* ─── Premium Header ─── */}
-        <header
-          className="relative z-30 flex h-16 shrink-0 items-center justify-between px-4 sm:px-5 xl:px-6"
-          style={{
-            background: 'rgba(8,8,18,0.80)',
-            backdropFilter: 'blur(32px) saturate(1.4)',
-            WebkitBackdropFilter: 'blur(32px) saturate(1.4)',
-            borderBottom: '1px solid rgba(130,120,220,0.08)',
-            boxShadow: '0 1px 0 0 rgba(255,255,255,0.02) inset',
-          }}
-        >
-          {/* Left: Route info */}
-          <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/[0.06] lg:hidden"
-              style={{ color: '#6b6585' }}
-              aria-label="فتح قائمة التنقل"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+        <header className="relative z-30 h-[72px] shrink-0 border-b border-white/[0.065] bg-[#080b13]/88 px-3 backdrop-blur-2xl sm:px-5">
+          <div className="mx-auto flex h-full w-full max-w-[1680px] items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-4">
+              <Link to="/dashboard" className="hidden shrink-0 items-center lg:flex" aria-label="VELOR — مركز المتابعة">
+                <VelorLogo size={30} wordmarkClassName="text-[14px] font-extrabold tracking-[.2em] text-white" />
+              </Link>
 
-            {/* Breadcrumb */}
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(99,102,241,0.1))',
-                border: '1px solid rgba(139,92,246,0.15)',
-              }}>
-                <span className="text-sm">{routeIcons[routeKey] || '⚡'}</span>
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold tracking-[-0.02em] text-white">{currentRoute}</p>
-                <p className="mt-px hidden text-[10px] sm:block" style={{ color: '#6b6585' }}>
-                  {profile.company_name || 'مساحة عمل VELOR'}
-                </p>
-              </div>
+              <Link to="/dashboard" className="flex min-w-0 items-center gap-2.5 lg:hidden" aria-label="VELOR — مركز المتابعة">
+                <VelorMark size={31} decorative />
+                <div className="min-w-0">
+                  <p className="truncate text-[13px] font-extrabold text-white">{currentRoute}</p>
+                  <p className="truncate text-[9px] text-velor-muted">{profile.company_name || 'مساحة عمل VELOR'}</p>
+                </div>
+              </Link>
+
+              <span className="hidden h-6 w-px bg-white/[0.08] lg:block" aria-hidden="true" />
+              <Sidebar mode="desktop" />
             </div>
-          </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-
-            {/* Search bar — desktop */}
-            <button
-              type="button"
-              onClick={() => setCommandOpen(true)}
-              className="hidden h-9 w-[200px] items-center justify-between rounded-xl px-3 text-xs transition-all duration-200 hover:border-[rgba(130,120,220,0.2)] md:flex"
-              style={{
-                border: '1px solid rgba(130,120,220,0.1)',
-                background: 'rgba(255,255,255,0.025)',
-                color: '#6b6585',
-              }}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Search className="h-3.5 w-3.5" />
-                ابحث أو انتقل
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-lg border px-1.5 py-0.5 text-[9px]"
-                style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)' }}>
-                <Command className="h-2.5 w-2.5" /> K
-              </span>
-            </button>
-
-            {/* Search icon — mobile */}
-            <button
-              type="button"
-              onClick={() => setCommandOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/[0.05] md:hidden"
-              style={{ color: '#6b6585' }}
-              aria-label="البحث"
-            >
-              <Search className="h-[17px] w-[17px]" />
-            </button>
-
-            {/* Protected badge */}
-            <Badge tone="neutral" className="hidden text-[10px] sm:inline-flex">مساحة محمية</Badge>
-
-            {/* Notifications */}
-            <div className="relative">
+            <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
-                onClick={() => setNotificationOpen((open) => !open)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/[0.05]"
-                style={{ color: '#6b6585' }}
-                aria-label="الإشعارات"
-                aria-expanded={notificationOpen}
+                onClick={() => setCommandOpen(true)}
+                className="hidden h-10 min-w-[176px] items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 text-[11px] text-velor-muted transition hover:border-white/[0.12] hover:bg-white/[0.045] hover:text-velor-secondary 2xl:flex"
               >
-                <Bell className="h-[17px] w-[17px]" />
+                <span className="inline-flex items-center gap-2"><Search className="h-3.5 w-3.5" /> ابحث أو انتقل</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-white/[0.08] bg-white/[0.035] px-1.5 py-0.5 text-[9px]"><Command className="h-2.5 w-2.5" /> K</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setCommandOpen(true)}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-velor-muted transition hover:bg-white/[0.05] hover:text-white 2xl:hidden"
+                aria-label="البحث والانتقال السريع"
+              >
+                <Search className="h-[17px] w-[17px]" />
               </button>
 
-              {notificationOpen && (
-                <div
-                  className="absolute right-0 top-11 w-[min(340px,calc(100vw-2rem))] rounded-2xl p-3 animate-velor-in"
-                  style={{
-                    background: 'rgba(10,10,22,0.96)',
-                    backdropFilter: 'blur(32px)',
-                    WebkitBackdropFilter: 'blur(32px)',
-                    border: '1px solid rgba(130,120,220,0.12)',
-                    boxShadow: '0 1px 0 0 rgba(255,255,255,0.04) inset, 0 40px 120px rgba(0,0,0,0.6)',
-                  }}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setProfileOpen((open) => !open)}
+                  className="flex h-10 items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.025] px-2 text-right transition hover:border-white/[0.12] hover:bg-white/[0.045]"
+                  aria-label="قائمة الحساب"
+                  aria-expanded={profileOpen}
                 >
-                  <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: 'rgba(130,120,220,0.08)' }}>
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-lg" style={{ background: 'rgba(139,92,246,0.15)' }}>
-                        <Bell className="h-3 w-3 text-purple-400" />
-                      </span>
-                      <p className="text-xs font-bold text-white">الإشعارات</p>
-                    </div>
-                    <Badge tone="neutral">المصدر غير متصل</Badge>
-                  </div>
-                  <div className="py-8 text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl" style={{
-                      background: 'linear-gradient(135deg, rgba(139,92,246,0.1), rgba(99,102,241,0.05))',
-                      border: '1px solid rgba(139,92,246,0.15)',
-                    }}>
-                      <Bell className="h-5 w-5 text-purple-400 opacity-60" />
-                    </div>
-                    <p className="text-xs font-semibold" style={{ color: '#b0aacb' }}>مركز الإشعارات غير متاح حاليًا</p>
-                    <p className="mt-1.5 mx-auto max-w-[240px] text-[10px] leading-5" style={{ color: '#6b6585' }}>
-                      لا يوجد مصدر موثوق للأحداث غير المقروءة متصل بهذه اللوحة.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-violet-400/15 bg-violet-400/10 text-velor-violet">
+                    <UserRound className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="hidden max-w-[112px] truncate text-[11px] font-bold text-white xl:block">{profile.company_name || 'VELOR'}</span>
+                  <ChevronDown className="hidden h-3 w-3 text-velor-muted xl:block" />
+                </button>
 
-            {/* User avatar */}
-            <div
-              className="flex h-9 items-center gap-2 rounded-xl px-2 pr-2.5 transition-all duration-200 hover:border-[rgba(130,120,220,0.15)] hover:bg-white/[0.03]"
-              style={{
-                border: '1px solid rgba(130,120,220,0.08)',
-                background: 'rgba(255,255,255,0.025)',
-              }}
-            >
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg" style={{
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(99,102,241,0.2))',
-                border: '1px solid rgba(139,92,246,0.2)',
-              }}>
-                <UserRound className="h-3.5 w-3.5 text-purple-400" />
+                {profileOpen && (
+                  <div className="absolute left-0 top-12 w-64 overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0c101b]/98 p-2 shadow-[0_32px_100px_rgba(0,0,0,.65)] backdrop-blur-2xl animate-velor-in">
+                    <div className="border-b border-white/[0.07] px-3 py-3">
+                      <p className="truncate text-xs font-bold text-white">{profile.company_name || 'مساحة عمل VELOR'}</p>
+                      <p className="mt-1 truncate text-[10px] text-velor-muted">{profile.email || 'حساب مساحة العمل'}</p>
+                    </div>
+                    <button type="button" onClick={handleLogout} className="mt-1 flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-xs font-semibold text-rose-300 transition hover:bg-rose-400/[0.08]">
+                      <LogOut className="h-4 w-4" /> تسجيل الخروج
+                    </button>
+                  </div>
+                )}
               </div>
-              <span className="hidden max-w-[120px] truncate text-[11px] font-bold text-white xl:block">
-                {profile.company_name || 'VELOR'}
-              </span>
             </div>
           </div>
         </header>
 
+        <Sidebar mode="mobile" />
+
         {/* Main content */}
-        <main className={`relative z-10 flex min-h-0 flex-1 flex-col pb-24 lg:pb-0 ${isWorkspaceDetail ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <main className={`relative flex min-h-0 flex-1 flex-col pb-24 lg:pb-0 ${isWorkspaceDetail ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           <Outlet />
         </main>
       </div>

@@ -233,7 +233,8 @@ test('secondary workspace surfaces fail closed when their sources are unavailabl
     const apiSource = readFileSync(new URL('../src/services/api.js', import.meta.url), 'utf8');
 
     assert.doesNotMatch(layoutSource, /No unread items|Nothing to show yet/);
-    assert.match(layoutSource, /المصدر غير متصل/);
+    assert.match(layoutSource, /قائمة الحساب/);
+    assert.doesNotMatch(layoutSource, /مركز الإشعارات غير متاح|المصدر غير متصل/);
     assert.doesNotMatch(layoutSource, /\/preview|Preview dataset|Search or jump to|Protected workspace/);
 
     assert.doesNotMatch(analyticsSource, /Source linked/);
@@ -253,6 +254,9 @@ test('secondary workspace surfaces fail closed when their sources are unavailabl
     assert.match(sidebarSource, /activePath\.startsWith\('\/inbox\/'\)/);
     assert.match(sidebarSource, /مركز المتابعة/);
     assert.match(sidebarSource, /الكتالوج والسياسات/);
+    assert.match(sidebarSource, /grid-cols-4/);
+    assert.match(sidebarSource, /التنقل على الهاتف/);
+    assert.doesNotMatch(sidebarSource, /<aside/);
     assert.doesNotMatch(sidebarSource, /path: '\/analytics'|path: '\/automations'|path: '\/billing'/);
     assert.doesNotMatch(sidebarSource, /Command Center|Conversations|AI Behavior|Setup & channels|Current plan|Sign out/);
     assert.match(onboardingSource, /setWhatsapp\(\{ status: 'unknown', qrCode: '', reason: 'تعذر التحقق من حالة القناة\.'/);

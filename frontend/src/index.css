@@ -2,33 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════════
-   VELOR DESIGN SYSTEM — WORLD-CLASS DARK UI
-   ═══════════════════════════════════════════════════════════════ */
+/* VELOR product workspace — restrained dark interface */
 
 :root {
   color-scheme: dark;
 
   /* ── Core Background Palette ── */
-  --velor-bg-deep: #020206;
-  --velor-bg: #06060f;
-  --velor-canvas: #09091a;
-  --velor-surface-0: #0b0b1a;
-  --velor-surface-1: #0e0e1e;
-  --velor-surface-2: #121228;
-  --velor-surface-3: #161630;
-  --velor-surface-hover: #1c1c38;
+  --velor-bg-deep: #05070c;
+  --velor-bg: #070a11;
+  --velor-canvas: #0a0e17;
+  --velor-surface-0: #0c101a;
+  --velor-surface-1: #101521;
+  --velor-surface-2: #151b29;
+  --velor-surface-3: #1a2131;
+  --velor-surface-hover: #202839;
 
   /* ── Border Tokens ── */
-  --velor-border-subtle: rgba(255, 255, 255, 0.04);
-  --velor-border: rgba(255, 255, 255, 0.08);
-  --velor-border-strong: rgba(255, 255, 255, 0.16);
+  --velor-border-subtle: rgba(255, 255, 255, 0.065);
+  --velor-border: rgba(255, 255, 255, 0.10);
+  --velor-border-strong: rgba(255, 255, 255, 0.17);
   --velor-border-glow: rgba(139, 92, 246, 0.4);
 
   /* ── Text Tokens ── */
-  --velor-text: #f0eeff;
-  --velor-text-secondary: #b0aacb;
-  --velor-text-muted: #6b6585;
+  --velor-text: #f5f3ff;
+  --velor-text-secondary: #b9b6c9;
+  --velor-text-muted: #767386;
 
   /* ── Brand Colors ── */
   --velor-purple: #8b5cf6;
@@ -61,15 +59,15 @@
   --velor-glow-blue: 0 0 0 1px rgba(56, 189, 248, 0.2), 0 6px 20px rgba(56, 189, 248, 0.1);
   --velor-glow-green: 0 0 0 1px rgba(52, 211, 153, 0.2), 0 6px 20px rgba(52, 211, 153, 0.09);
   --velor-focus: 0 0 0 3px rgba(139, 92, 246, 0.28), 0 0 0 1px rgba(139, 92, 246, 0.5);
-  --velor-shadow-card: 0 1px 0 0 rgba(255, 255, 255, 0.035) inset, 0 16px 48px rgba(0, 0, 0, 0.32);
-  --velor-shadow-panel: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 24px 72px rgba(0, 0, 0, 0.4);
+  --velor-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 12px 30px rgba(0, 0, 0, 0.20);
+  --velor-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 56px rgba(0, 0, 0, 0.32);
   --velor-shadow-popup: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset, 0 32px 96px rgba(0, 0, 0, 0.5);
 
   /* ── Shape ── */
   --velor-radius-sm: 0.5rem;
   --velor-radius-control: 0.875rem;
-  --velor-radius-card: 1.25rem;
-  --velor-radius-panel: 1.5rem;
+  --velor-radius-card: 1rem;
+  --velor-radius-panel: 1.25rem;
   --velor-radius-xl: 2rem;
 
   /* ── Motion ── */
@@ -97,11 +95,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background:
-    radial-gradient(ellipse 80% 60% at 70% -10%, rgba(99, 102, 241, 0.14), transparent),
-    radial-gradient(ellipse 60% 50% at -5% 90%, rgba(56, 189, 248, 0.07), transparent),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(139, 92, 246, 0.04), transparent),
-    var(--velor-bg);
+  background: var(--velor-bg);
   color: var(--velor-text);
   font-family: 'Vazirmatn', 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
   font-weight: 400;
@@ -162,11 +156,9 @@ textarea:focus:not(:focus-visible) {
     position: relative;
     border: 1px solid var(--velor-border-subtle);
     border-radius: var(--velor-radius-panel);
-    background:
-      linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, transparent 40%),
-      rgba(10, 10, 22, 0.6);
-    backdrop-filter: blur(48px) saturate(1.8);
-    -webkit-backdrop-filter: blur(48px) saturate(1.8);
+    background: rgba(12, 16, 26, 0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     box-shadow: var(--velor-shadow-panel);
     overflow: hidden;
   }
@@ -176,8 +168,7 @@ textarea:focus:not(:focus-visible) {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: var(--velor-gradient-aurora);
-    opacity: 0.5;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.022), transparent 36%);
     pointer-events: none;
   }
 
@@ -185,11 +176,9 @@ textarea:focus:not(:focus-visible) {
     position: relative;
     border: 1px solid var(--velor-border-subtle);
     border-radius: var(--velor-radius-card);
-    background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, transparent 80%),
-      rgba(14, 14, 30, 0.4);
-    backdrop-filter: blur(24px) saturate(1.5);
-    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    background: rgba(15, 20, 32, 0.84);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     box-shadow: var(--velor-shadow-card);
     transition:
       transform 220ms var(--velor-ease),
@@ -204,12 +193,12 @@ textarea:focus:not(:focus-visible) {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.018), transparent 42%);
     pointer-events: none;
   }
 
   .velor-card-interactive:hover {
-    transform: translateY(-3px) scale(1.004);
+    transform: translateY(-1px);
     border-color: var(--velor-border);
     box-shadow: var(--velor-glow-subtle), var(--velor-shadow-card);
   }

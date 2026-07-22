@@ -59,6 +59,17 @@ test('decision brief exposes evidence and uncertainty before action', () => {
     assert.match(source, /معلومة ناقصة — راجع قبل الرد/);
 });
 
+test('mobile decision dialog stays above the compact navigation dock', () => {
+    const workspaceSource = readFileSync(new URL('../src/pages/dashboard/CustomerWorkspace.jsx', import.meta.url), 'utf8');
+    const navigationSource = readFileSync(new URL('../src/components/Sidebar.jsx', import.meta.url), 'utf8');
+    const layoutSource = readFileSync(new URL('../src/components/Layout.jsx', import.meta.url), 'utf8');
+
+    assert.match(workspaceSource, /z-\[70\]/);
+    assert.match(workspaceSource, /max-h-\[calc\(100dvh-4\.5rem\)\]/);
+    assert.match(navigationSource, /z-20/);
+    assert.doesNotMatch(layoutSource, /<main className=\{`relative z-10/);
+});
+
 test('workspace channel truth comes only from the canonical channel_type field', () => {
     assert.deepEqual(getLeadChannelPresentation({ channel_type: 'VELOR_WEB_CHAT', phone: '+201000000000' }), {
         key: 'web_chat',
