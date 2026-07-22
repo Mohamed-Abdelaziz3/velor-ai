@@ -234,7 +234,7 @@ export default function Inbox() {
           <div className="shrink-0 border-b border-white/[0.07] p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-white">المحادثات</p>
+                <p className="text-sm font-semibold text-white">الأولوية والمحادثات</p>
                 <p className="mt-0.5 text-[10px] text-velor-muted">{conversationTotal === null ? `تم تحميل ${conversations.length}` : `نعرض ${conversations.length} من ${conversationTotal}`}</p>
               </div>
             </div>
@@ -243,10 +243,10 @@ export default function Inbox() {
               <input value={query} onChange={(event) => setQuery(event.target.value)} className="velor-input h-10 min-h-10 px-9 text-xs" placeholder="ابحث في المحادثات…" aria-label="البحث في المحادثات" />
               <Filter className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-velor-muted" />
             </div>
-            <SegmentedControl value={filter} onChange={setFilter} options={[{ value: 'all', label: 'الكل' }, { value: 'hot', label: 'الأولوية' }]} className="mt-3 w-full [&>button]:flex-1" />
+            <SegmentedControl value={filter} onChange={setFilter} options={[{ value: 'all', label: 'كل المحادثات' }, { value: 'hot', label: 'تحتاج انتباهك' }]} className="mt-3 w-full [&>button]:flex-1" />
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-2" aria-label="قائمة المحادثات">
+          <div className="flex-1 min-h-0 overflow-y-auto p-2" aria-label="قائمة الأولوية والمحادثات">
             {loading && <div className="flex h-28 items-center justify-center"><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/10 border-t-velor-purple" /></div>}
             {!loading && filtered.map((conversation) => {
               const active = selected?.id === conversation.id;
@@ -310,8 +310,8 @@ export default function Inbox() {
 
               <footer className="shrink-0 border-t border-white/[0.07] bg-[#0d0f18]/95 p-3 sm:p-4">
                 <div className="mx-auto flex max-w-[760px] flex-col gap-3 rounded-2xl border border-white/[0.09] bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div><p className="text-xs font-semibold text-white">هذه معاينة للقراءة فقط</p><p className="mt-1 text-[10px] leading-4 text-velor-muted">افتح مساحة العميل للرد أو تولّي المحادثة أو مراجعة الأدلة أو إعادة التحكم إلى VELOR.</p></div>
-                  <Button variant="secondary" onClick={openWorkspace} className="shrink-0 text-[11px]">فتح مساحة العميل <ExternalLink className="h-3.5 w-3.5" /></Button>
+                  <div><p className="text-xs font-semibold text-white">راجع القرار قبل الرد</p><p className="mt-1 text-[10px] leading-4 text-velor-muted">افتح مساحة العميل لرؤية الدليل والرد المقترح أو تولّي المحادثة عند عدم اليقين.</p></div>
+                  <Button variant="secondary" onClick={openWorkspace} className="shrink-0 text-[11px]">راجع القرار والدليل <ExternalLink className="h-3.5 w-3.5" /></Button>
                 </div>
               </footer>
             </>
@@ -348,7 +348,7 @@ export default function Inbox() {
               </Card>
 
               <Card className="p-4">
-                <p className="text-[10px] font-bold tracking-[0.14em] text-velor-purple">ملخص العميل</p>
+                <p className="text-[10px] font-bold tracking-[0.14em] text-velor-purple">ما الذي يحتاج انتباهك؟</p>
                 <p className="mt-3 text-xs leading-5 text-velor-secondary">{selected.summary || 'لا يوجد ملخص موثق وآمن للعميل في هذه المحادثة حتى الآن.'}</p>
               </Card>
 
@@ -363,7 +363,7 @@ export default function Inbox() {
 
               <Card className="border-velor-purple/15 bg-velor-purple/[0.055] p-4">
                 <div className="flex items-center gap-2 text-xs font-semibold text-white"><Zap className="h-4 w-4 text-velor-purple" /> الخطوة التالية</div>
-                <p className="mt-2 text-[11px] leading-5 text-velor-secondary">افتح مساحة العميل المبنية على الأدلة لمراجعة الإجراء المقترح.</p>
+                <p className="mt-2 text-[11px] leading-5 text-velor-secondary">افتح مساحة العميل لمراجعة الإجراء المقترح ودليله، ثم رد أو صعّد القرار.</p>
               </Card>
 
               <div className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-3 py-2.5 text-[10px] text-velor-muted"><span className="inline-flex items-center gap-1.5"><Wifi className={cx('h-3.5 w-3.5', connectionState === 'connected' ? 'text-velor-green' : connectionState === 'disconnected' ? 'text-velor-red' : 'text-velor-muted')} /> {stream.detail}</span><span className="shrink-0">{lastEventAt ? `آخر حدث ${formatRelativeTime(lastEventAt, { now: clockNow, locale: 'ar-EG' })}` : 'لم يصل أي حدث'}</span></div>

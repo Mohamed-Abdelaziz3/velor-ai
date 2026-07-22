@@ -15,7 +15,7 @@ export const DecisionBrief = ({ onDismiss }) => {
         requestComposerFocus,
         navigateToMessage,
     } = useWorkspace();
-    const [detailsOpen, setDetailsOpen] = useState(false);
+    const [detailsOpen, setDetailsOpen] = useState(true);
     const brief = useMemo(() => deriveCustomerBrief({
         backendBrief: currentLead?.customer_brief,
         currentLead,
@@ -30,6 +30,11 @@ export const DecisionBrief = ({ onDismiss }) => {
     const evidence = (brief.evidence || []).map((item) => ({ ...canonicalEvidenceRef(item), summary: evidenceSummary(item) }));
     const canWriteNow = Boolean(controlState?.manualEnabled);
     const requiresManualControl = Boolean(brief.human_takeover || canWriteNow);
+    const decisionState = brief.human_takeover
+        ? { label: 'تحتاج تدخّلًا بشريًا', className: 'border-amber-300/25 bg-amber-300/[0.07] text-amber-100' }
+        : brief.insufficient_data || missing.length
+            ? { label: 'معلومة ناقصة — راجع قبل الرد', className: 'border-amber-300/20 bg-amber-300/[0.05] text-amber-100' }
+            : { label: 'قرار مرتبط بدليل المحادثة', className: 'border-emerald-300/20 bg-emerald-300/[0.05] text-emerald-100' };
 
     const handleReplyAction = async () => {
         if (!canWriteNow) {
@@ -54,6 +59,7 @@ export const DecisionBrief = ({ onDismiss }) => {
 
             <section className="rounded-2xl border border-[#A855F7]/30 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.15),transparent_48%),rgba(255,255,255,0.025)] p-4">
                 <div className="mb-4 flex items-center gap-2 text-[#E9D5FF]"><FiCpu className="h-4 w-4" /><h2 className="text-sm font-bold">ملخص القرار</h2></div>
+                <p className={`mb-4 rounded-xl border px-3 py-2 text-xs font-bold ${decisionState.className}`}>{decisionState.label}</p>
                 <dl className="space-y-4">
                     <div><dt className="text-[11px] font-bold text-white/45">ما الذي حدث؟</dt><dd className="mt-1 text-sm font-bold leading-6 text-white">{valueOrUnknown(brief.customer_state)}</dd></div>
                     <div><dt className="text-[11px] font-bold text-white/45">ما الذي يريده العميل؟</dt><dd className="mt-1 text-sm leading-6 text-white/85">{valueOrUnknown(brief.what_customer_wants)}</dd></div>
@@ -72,7 +78,7 @@ export const DecisionBrief = ({ onDismiss }) => {
             </section>
 
             <button type="button" onClick={() => setDetailsOpen((value) => !value)} className="mt-3 flex min-h-11 items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 text-xs font-bold text-white/75 hover:bg-white/[0.06]" aria-expanded={detailsOpen}>
-                الأدلة والتفاصيل
+                <span>الأدلة التي بُني عليها القرار {evidence.length ? `(${evidence.length})` : ''}</span>
                 <FiChevronDown className={`transition-transform ${detailsOpen ? 'rotate-180' : ''}`} />
             </button>
             {detailsOpen && (

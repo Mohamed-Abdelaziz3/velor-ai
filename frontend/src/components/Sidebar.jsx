@@ -1,19 +1,14 @@
 import { useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  BarChart3,
-  Bot,
-  ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
-  CreditCard,
   LayoutDashboard,
   LogOut,
   MessageSquareText,
   Settings,
   SlidersHorizontal,
   X,
-  Sparkles,
 } from 'lucide-react';
 import { logout } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,16 +18,13 @@ import { cx } from './velor/ui';
 import { formatClockTime } from '../utils/timeUtils';
 
 const primaryNavigation = [
-  { path: '/dashboard', label: 'مركز المتابعة', shortLabel: 'الرئيسية', icon: LayoutDashboard, color: 'purple' },
+  { path: '/dashboard', label: 'مركز المتابعة', shortLabel: 'المتابعة', icon: LayoutDashboard, color: 'purple' },
   { path: '/inbox', label: 'المحادثات', shortLabel: 'المحادثات', icon: MessageSquareText, color: 'blue' },
-  { path: '/analytics', label: 'التحليلات', shortLabel: 'التحليلات', icon: BarChart3, color: 'green' },
-  { path: '/automations', label: 'سلوك الذكاء الاصطناعي', shortLabel: 'السلوك', icon: Bot, color: 'amber' },
 ];
 
 const workspaceNavigation = [
   { path: '/onboarding', label: 'إعداد القنوات', shortLabel: 'القنوات', icon: SlidersHorizontal, color: 'blue' },
-  { path: '/settings', label: 'الإعدادات', shortLabel: 'الإعدادات', icon: Settings, color: 'neutral' },
-  { path: '/billing', label: 'الاشتراك والفوترة', shortLabel: 'الاشتراك', icon: CreditCard, color: 'amber' },
+  { path: '/settings', label: 'الكتالوج والسياسات', shortLabel: 'المصادر', icon: Settings, color: 'neutral' },
 ];
 
 const _streamStates = {
@@ -43,22 +35,10 @@ const _streamStates = {
   idle:         { label: 'غير متصل',       tone: 'neutral', title: 'التحديثات غير مفعّلة',       detail: 'لا يوجد اتصال نشط بمصدر الأحداث.' },
 };
 
-const planLabels = {
-  free:       'المجانية',
-  starter:    'الأساسية',
-  pro:        'الاحترافية',
-  business:   'الأعمال',
-  enterprise: 'المؤسسات',
-};
-
-
-
-const getPlanLabel = (plan) => planLabels[String(plan || 'free').toLowerCase()] || String(plan || 'المجانية');
-
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { plan, logoutUser } = useAuth();
+  const { logoutUser } = useAuth();
   const { connectionState, connectedAt } = useGlobalEvents();
   const connectedTime = connectionState === 'connected' ? formatClockTime(connectedAt, 'ar-EG') : '';
 
@@ -187,31 +167,6 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         {/* Gradient separator */}
         <div className="mb-3 velor-separator" />
 
-        {/* Plan badge */}
-        {!collapsed && (
-          <Link
-            to="/billing"
-            className="group mb-2 flex items-center justify-between rounded-xl border p-3 transition-all duration-200"
-            style={{
-              borderColor: 'rgba(130,120,220,0.1)',
-              background: 'linear-gradient(135deg, rgba(139,92,246,0.06), rgba(99,102,241,0.03))',
-            }}
-          >
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(99,102,241,0.2))',
-              }}>
-                <Sparkles className="h-3.5 w-3.5 text-purple-400" />
-              </span>
-              <div>
-                <p className="text-[10px] font-bold" style={{ color: 'var(--velor-text-secondary)', opacity: 0.7 }}>الباقة الحالية</p>
-                <p className="mt-0.5 text-xs font-semibold text-white">{getPlanLabel(plan)}</p>
-              </div>
-            </div>
-            <ChevronLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" style={{ color: '#6b6585' }} />
-          </Link>
-        )}
-
         {/* Logout button */}
         <button
           type="button"
@@ -298,7 +253,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         }}
         aria-label="التنقل على الهاتف"
       >
-        {[...primaryNavigation.slice(0, 3), workspaceNavigation[1]].map((item) => {
+        {[...primaryNavigation, workspaceNavigation[1]].map((item) => {
           const Icon = item.icon;
           const href = item.path;
           const activePath = location.pathname;

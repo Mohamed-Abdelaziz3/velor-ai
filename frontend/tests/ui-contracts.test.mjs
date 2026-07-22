@@ -185,7 +185,8 @@ test('Truth UI contracts prevent optimistic stream, identity, and intent present
     assert.match(inboxSource, /groupMessagesByDate\(messages\)/);
     assert.match(inboxSource, /DeliveryStatus/);
     assert.match(inboxSource, /navigate\(`\/inbox\/\$\{selected\.id\}`\)/);
-    assert.match(inboxSource, /هذه معاينة للقراءة فقط/);
+    assert.match(inboxSource, /راجع القرار قبل الرد/);
+    assert.match(inboxSource, /راجع القرار والدليل/);
     assert.match(inboxSource, /dir="rtl" lang="ar"/);
     assert.doesNotMatch(inboxSource, /RingGauge|label="intent"|conversation\.unread|selected\.online|`\/customers\/\$\{|sendMessage|toggleTakeover|<textarea|routeConversationId/);
 
@@ -198,10 +199,13 @@ test('Truth UI contracts prevent optimistic stream, identity, and intent present
 test('merchant dashboard and billing surfaces are Arabic-first RTL and never synthesize business data', () => {
     const dashboardSource = readFileSync(new URL('../src/pages/velor/Dashboard.jsx', import.meta.url), 'utf8');
     const billingSource = readFileSync(new URL('../src/pages/velor/Billing.jsx', import.meta.url), 'utf8');
+    const authHeroSource = readFileSync(new URL('../src/components/AuthHero.jsx', import.meta.url), 'utf8');
 
     assert.match(dashboardSource, /dir="rtl" lang="ar"/);
-    assert.match(dashboardSource, /نسب الإيراد متوقّف عمدًا/);
-    assert.match(dashboardSource, /مش إجمالي طلبات أو مدفوعات مؤكدة/);
+    assert.match(dashboardSource, /ما يحتاج قرارك الآن/);
+    assert.match(dashboardSource, /الترتيب مبني على حالة المحادثة والدليل المحفوظ/);
+    assert.match(dashboardSource, /حالة سير عمل، وليست عملية بيع/);
+    assert.doesNotMatch(dashboardSource, /getStats|hoursSaved|automation_rate|dailyTarget/);
     assert.doesNotMatch(dashboardSource, /velorPreviewData|isPreviewMode|previewStats|previewActions|previewTrend|previewHeatmap/);
     assert.doesNotMatch(dashboardSource, /Sales intelligence overview|Priority queue unavailable|AI-attributed sales|Good morning/);
 
@@ -211,6 +215,11 @@ test('merchant dashboard and billing surfaces are Arabic-first RTL and never syn
     assert.match(billingSource, /الفواتير غير متاحة/);
     assert.doesNotMatch(billingSource, /velorPreviewData|isPreviewMode|previewInvoices|معاينة فوترة تجريبية/);
     assert.doesNotMatch(billingSource, /Plan and usage|Checkout not connected|Synthetic billing preview|Current plan/);
+
+    assert.match(authHeroSource, /واجهة توضيحية/);
+    assert.match(authHeroSource, /غير متصل بعميل حقيقي/);
+    assert.match(authHeroSource, /رد مقترح للمراجعة/);
+    assert.doesNotMatch(authHeroSource, /2\.4k|98%|340|ثقة 96%/);
 });
 
 test('secondary workspace surfaces fail closed when their sources are unavailable', () => {
@@ -243,6 +252,8 @@ test('secondary workspace surfaces fail closed when their sources are unavailabl
 
     assert.match(sidebarSource, /activePath\.startsWith\('\/inbox\/'\)/);
     assert.match(sidebarSource, /مركز المتابعة/);
+    assert.match(sidebarSource, /الكتالوج والسياسات/);
+    assert.doesNotMatch(sidebarSource, /path: '\/analytics'|path: '\/automations'|path: '\/billing'/);
     assert.doesNotMatch(sidebarSource, /Command Center|Conversations|AI Behavior|Setup & channels|Current plan|Sign out/);
     assert.match(onboardingSource, /setWhatsapp\(\{ status: 'unknown', qrCode: '', reason: 'تعذر التحقق من حالة القناة\.'/);
 

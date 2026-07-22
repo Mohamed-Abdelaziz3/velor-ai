@@ -9,12 +9,6 @@ const features = [
   { icon: ShieldCheck,  label: 'الرد من معلومات الإعداد', tone: 'blue',   toneClass: 'bg-blue-500/10 text-blue-400 border-blue-500/15' },
 ];
 
-const stats = [
-  { label: 'عميل نشط',    value: '2.4k', icon: '👥' },
-  { label: 'رد آلي',      value: '98%',  icon: '⚡' },
-  { label: 'ساعة موفرة',  value: '340',  icon: '⏱' },
-];
-
 export default function AuthHero({ mode = 'login' }) {
   return (
     <aside
@@ -85,24 +79,6 @@ export default function AuthHero({ mode = 'login' }) {
           </p>
         </div>
 
-        {/* Stats row */}
-        <div className="mb-8 flex items-center gap-4 animate-velor-in-delayed">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="flex flex-col items-center gap-1 rounded-xl border px-4 py-3"
-              style={{
-                borderColor: 'rgba(130,120,220,0.1)',
-                background: 'rgba(139,92,246,0.04)',
-              }}
-            >
-              <span className="text-lg">{s.icon}</span>
-              <span className="text-lg font-black text-white metric-numbers">{s.value}</span>
-              <span className="text-[9px] font-medium" style={{ color: '#6b6585' }}>{s.label}</span>
-            </div>
-          ))}
-        </div>
-
         {/* Demo card */}
         <div className="relative max-w-[640px] animate-velor-in-delayed">
           {/* Outer glow */}
@@ -166,7 +142,7 @@ export default function AuthHero({ mode = 'login' }) {
                     <span>VELOR · من بيانات الإعداد</span>
                     <span className="mr-auto flex items-center gap-1" style={{ color: '#34d399' }}>
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-signal-pulse" />
-                      ثقة 96%
+                      رد مقترح للمراجعة
                     </span>
                   </div>
                 </div>

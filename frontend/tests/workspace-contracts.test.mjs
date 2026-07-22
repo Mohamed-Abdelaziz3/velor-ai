@@ -51,6 +51,14 @@ test('decision brief is a presentation adapter over canonical backend fields', (
     assert.equal(JSON.stringify(brief).includes('local message'), false);
 });
 
+test('decision brief exposes evidence and uncertainty before action', () => {
+    const source = readFileSync(new URL('../src/components/workspace/DecisionBrief.jsx', import.meta.url), 'utf8');
+    assert.match(source, /useState\(true\)/);
+    assert.match(source, /الأدلة التي بُني عليها القرار/);
+    assert.match(source, /تحتاج تدخّلًا بشريًا/);
+    assert.match(source, /معلومة ناقصة — راجع قبل الرد/);
+});
+
 test('workspace channel truth comes only from the canonical channel_type field', () => {
     assert.deepEqual(getLeadChannelPresentation({ channel_type: 'VELOR_WEB_CHAT', phone: '+201000000000' }), {
         key: 'web_chat',
