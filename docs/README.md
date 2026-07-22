@@ -11,6 +11,21 @@ market, or production-readiness claims.
 - [`setup/LOCAL_SETUP.md`](setup/LOCAL_SETUP.md) — reproducible dependency installation and local verification.
 - [`release/VELOR_LAUNCH_READINESS_AUDIT.md`](release/VELOR_LAUNCH_READINESS_AUDIT.md) — external gates that still block a public paid launch.
 
+## Recommended GitHub Repository Topics
+
+When publishing or configuring repository settings on GitHub, use the following topics:
+- `artificial-intelligence`
+- `conversational-ai`
+- `llm`
+- `rag`
+- `saas`
+- `fastapi`
+- `react`
+- `python`
+- `multi-tenant`
+- `ecommerce`
+
+
 ## Architecture Decision Records
 
 - [`ADR-0001`](adr/0001-canonical-v2-conversation-path.md) — V2 is the canonical conversation path; V1 remains explicit rollback.
