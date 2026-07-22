@@ -610,7 +610,7 @@ class RefreshRequest(BaseModel):
 
 
 class AckPayload(BaseModel):
-    company_id: Optional[str] = None
+    company_id: str = Field(..., min_length=1, max_length=64, pattern=r"^[\w\-]+$")
     internal_message_id: Optional[str] = None
     wa_message_id: Optional[str] = None
     status: str
@@ -704,9 +704,14 @@ def _get_current_user(request: Request, db: Session = Depends(get_db)) -> dict:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if payload.get("token_type") != "access":
             raise HTTPException(status_code=401, detail="Invalid token type")
-        cid: str = payload.get("company_id", "")
-        if not cid:
+        cid = payload.get("company_id")
+        subject = payload.get("sub")
+        if not isinstance(cid, str) or not re.fullmatch(r"[\w\-]{1,64}", cid):
             raise HTTPException(status_code=401, detail="Invalid token payload")
+        # Tokens issued before the subject claim was standardized remain valid;
+        # when present, it must agree with the tenant claim.
+        if subject is not None and (not isinstance(subject, str) or subject != cid):
+            raise HTTPException(status_code=401, detail="Invalid token subject")
         company = db.query(Company).filter(
             Company.company_id == cid,
             Company.is_deleted == False,
@@ -3362,15 +3367,23 @@ async def whatsapp_webhook_ack(
     # Try to find message by internal ID first, then wa_message_id
     msg = None
     if payload.internal_message_id:
-        query = db.query(Message).filter(Message.internal_message_id == payload.internal_message_id)
-        if payload.company_id:
-            query = query.filter(Message.company_id == payload.company_id)
-        msg = query.first()
+        msg = (
+            db.query(Message)
+            .filter(
+                Message.internal_message_id == payload.internal_message_id,
+                Message.company_id == payload.company_id,
+            )
+            .first()
+        )
     if not msg and payload.wa_message_id:
-        query = db.query(Message).filter(Message.wa_message_id == payload.wa_message_id)
-        if payload.company_id:
-            query = query.filter(Message.company_id == payload.company_id)
-        msg = query.first()
+        msg = (
+            db.query(Message)
+            .filter(
+                Message.wa_message_id == payload.wa_message_id,
+                Message.company_id == payload.company_id,
+            )
+            .first()
+        )
 
     if not msg:
         return {"success": False, "detail": "Message not found"}

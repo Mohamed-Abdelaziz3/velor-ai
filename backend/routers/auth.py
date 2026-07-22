@@ -1,5 +1,6 @@
 from fastapi import Depends, Request, HTTPException
 import os
+import re
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
@@ -17,9 +18,12 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> dict:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if payload.get("token_type") != "access":
             raise HTTPException(status_code=401, detail="Invalid token type")
-        cid: str = payload.get("company_id", "")
-        if not cid:
+        cid = payload.get("company_id")
+        subject = payload.get("sub")
+        if not isinstance(cid, str) or not re.fullmatch(r"[\w\-]{1,64}", cid):
             raise HTTPException(status_code=401, detail="Invalid token payload")
+        if subject is not None and (not isinstance(subject, str) or subject != cid):
+            raise HTTPException(status_code=401, detail="Invalid token subject")
         company = db.query(Company).filter(
             Company.company_id == cid,
             Company.is_deleted == False,

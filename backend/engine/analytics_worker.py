@@ -3,10 +3,18 @@ import json
 import logging
 from datetime import datetime, timezone
 from database import SessionLocal, Lead, LeadMemory, LeadAnalytics, get_user_history
-from engine.analyzer import _parse_json
 from groq import AsyncGroq
 
 log = logging.getLogger("adam.analytics_worker")
+
+
+def _parse_json(text):
+    """Parse provider JSON without importing the legacy V1 brain module."""
+    try:
+        value = json.loads(text or "")
+    except (TypeError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 try:
@@ -54,7 +62,16 @@ async def analyze_lead_product_interest(company_id: str, user_id: str, lead_id: 
             log.warning(f"Lead {lead_id} not found.")
             return None
 
-        memory = session.query(LeadMemory).filter(LeadMemory.lead_id == lead_id).first()
+        memory = (
+            session.query(LeadMemory)
+            .join(Lead, LeadMemory.lead_id == Lead.id)
+            .filter(
+                LeadMemory.lead_id == lead_id,
+                Lead.company_id == company_id,
+                Lead.is_deleted == False,
+            )
+            .first()
+        )
 
         # Get history
         history = get_user_history(session, company_id, user_id, limit=50)
@@ -95,7 +112,16 @@ Perform the product interest analysis based on the instructions."""
         data = _parse_json(raw_content)
 
         with SessionLocal() as session:
-            analytics = session.query(LeadAnalytics).filter(LeadAnalytics.lead_id == lead_id).first()
+            analytics = (
+                session.query(LeadAnalytics)
+                .join(Lead, LeadAnalytics.lead_id == Lead.id)
+                .filter(
+                    LeadAnalytics.lead_id == lead_id,
+                    Lead.company_id == company_id,
+                    Lead.is_deleted == False,
+                )
+                .first()
+            )
             if not analytics:
                 analytics = LeadAnalytics(lead_id=lead_id)
                 session.add(analytics)

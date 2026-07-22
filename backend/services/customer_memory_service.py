@@ -544,9 +544,18 @@ def evaluate_customer_preference_memory(
     existing_items: List[CustomerPreferenceMemoryItem] = []
     if db and lead_id:
         try:
-            from database import LeadMemory
+            from database import Lead, LeadMemory
 
-            mem_row = db.query(LeadMemory).filter(LeadMemory.lead_id == int(lead_id)).first()
+            mem_row = (
+                db.query(LeadMemory)
+                .join(Lead, LeadMemory.lead_id == Lead.id)
+                .filter(
+                    LeadMemory.lead_id == int(lead_id),
+                    Lead.company_id == company_id,
+                    Lead.is_deleted == False,
+                )
+                .first()
+            )
             if mem_row and mem_row.preferences:
                 try:
                     parsed_json = json.loads(mem_row.preferences)
@@ -697,7 +706,15 @@ def evaluate_relationship_context(
         try:
             from database import Lead, Message, SystemEvent
 
-            lead_row = db.query(Lead).filter(Lead.id == int(lead_id)).first()
+            lead_row = (
+                db.query(Lead)
+                .filter(
+                    Lead.id == int(lead_id),
+                    Lead.company_id == company_id,
+                    Lead.is_deleted == False,
+                )
+                .first()
+            )
             if lead_row:
                 if lead_row.conversation_count and lead_row.conversation_count > 1:
                     continuity = RelationshipContinuity.RETURNING
@@ -800,9 +817,25 @@ def sync_preference_memory_to_db(
     if not db or not lead_id:
         return
     try:
-        from database import LeadMemory
+        from database import Lead, LeadMemory
 
-        mem_row = db.query(LeadMemory).filter(LeadMemory.lead_id == int(lead_id)).first()
+        mem_row = (
+            db.query(LeadMemory)
+            .join(Lead, LeadMemory.lead_id == Lead.id)
+            .filter(
+                LeadMemory.lead_id == int(lead_id),
+                Lead.company_id == company_id,
+                Lead.is_deleted == False,
+            )
+            .first()
+        )
+        if not db.query(Lead.id).filter(
+            Lead.id == int(lead_id),
+            Lead.company_id == company_id,
+            Lead.is_deleted == False,
+        ).first():
+            log.warning("Skipping preference memory sync for lead %s outside company %s", lead_id, company_id)
+            return
         if not mem_row:
             mem_row = LeadMemory(lead_id=int(lead_id))
             db.add(mem_row)

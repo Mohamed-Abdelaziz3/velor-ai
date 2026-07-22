@@ -25,12 +25,36 @@ async def rebuild_lead_intelligence_task(company_id: str, lead_id: int):
     log.info(f"Rebuilding intelligence for lead {lead_id}")
 
     with SessionLocal() as session:
-        lead = session.query(Lead).filter(Lead.id == lead_id).first()
+        lead = (
+            session.query(Lead)
+            .filter(Lead.id == lead_id, Lead.company_id == company_id, Lead.is_deleted == False)
+            .first()
+        )
         if not lead:
             return
 
-        memory = session.query(LeadMemory).filter(LeadMemory.lead_id == lead_id).first()
-        activities = session.query(ActivityLog).filter(ActivityLog.lead_id == lead_id).order_by(ActivityLog.timestamp.desc()).limit(10).all()
+        memory = (
+            session.query(LeadMemory)
+            .join(Lead, LeadMemory.lead_id == Lead.id)
+            .filter(
+                LeadMemory.lead_id == lead_id,
+                Lead.company_id == company_id,
+                Lead.is_deleted == False,
+            )
+            .first()
+        )
+        activities = (
+            session.query(ActivityLog)
+            .join(Lead, ActivityLog.lead_id == Lead.id)
+            .filter(
+                ActivityLog.lead_id == lead_id,
+                Lead.company_id == company_id,
+                Lead.is_deleted == False,
+            )
+            .order_by(ActivityLog.timestamp.desc())
+            .limit(10)
+            .all()
+        )
 
         memory_text = ""
         if memory:
@@ -98,7 +122,16 @@ Rules for execution_sequence:
         data = json.loads(raw_content)
 
         with SessionLocal() as session:
-            snapshot = session.query(LeadIntelligenceSnapshot).filter(LeadIntelligenceSnapshot.lead_id == lead_id).first()
+            snapshot = (
+                session.query(LeadIntelligenceSnapshot)
+                .join(Lead, LeadIntelligenceSnapshot.lead_id == Lead.id)
+                .filter(
+                    LeadIntelligenceSnapshot.lead_id == lead_id,
+                    Lead.company_id == company_id,
+                    Lead.is_deleted == False,
+                )
+                .first()
+            )
             if not snapshot:
                 snapshot = LeadIntelligenceSnapshot(lead_id=lead_id)
                 session.add(snapshot)
