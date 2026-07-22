@@ -467,6 +467,7 @@ def persist_v2_public_turn_atomic(
                     "direction": "outgoing",
                     "text": assistant_text,
                     "user_id": user_id,
+                    "channel": channel_type,
                     "delivery_status": outbound_delivery_status,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     # A public-safe, additive rendering contract is persisted

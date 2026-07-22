@@ -5,6 +5,7 @@ message, lead, usage, audit, and refresh-token writes transactionally scoped.
 """
 
 import hashlib
+import json
 import logging
 import os
 import re
@@ -1560,10 +1561,17 @@ def get_conversations_paginated(
 
 
 def fail_pending_messages(db: Session, minutes_old: int = 5) -> int:
+    """Mark stale outbound intents failed with an explicit recovery reason.
+
+    Pending is never silently collapsed into failed: every transition emits a
+    durable failure event that identifies the scheduler timeout. A concurrent
+    ACK that advanced the row wins the conditional update and is preserved.
+    """
     cutoff = datetime.now(timezone.utc) - timedelta(minutes=minutes_old)
     messages = (
         db.query(Message)
         .filter(
+            Message.direction == "outgoing",
             Message.delivery_status == "pending",
             Message.created_at <= cutoff,
         )
@@ -1572,8 +1580,31 @@ def fail_pending_messages(db: Session, minutes_old: int = 5) -> int:
     )
     count = 0
     for msg in messages:
-        msg.delivery_status = "failed"
+        reason = f"stale_pending_timeout:{max(1, int(minutes_old))}m"
+        updated = (
+            db.query(Message)
+            .filter(Message.id == msg.id, Message.delivery_status == "pending")
+            .update({Message.delivery_status: "failed"}, synchronize_session=False)
+        )
+        if updated != 1:
+            continue
         db.add(MessageEvent(message_id=msg.id, status="failed"))
+        db.add(
+            SystemEvent(
+                company_id=msg.company_id,
+                event_type="delivery.failed",
+                entity_id=msg.internal_message_id,
+                payload=json.dumps(
+                    {
+                        "message_id": msg.internal_message_id,
+                        "delivery_status": "failed",
+                        "failure_reason": reason,
+                        "source": "pending_sweeper",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                ),
+            )
+        )
         count += 1
     if count:
         db.commit()

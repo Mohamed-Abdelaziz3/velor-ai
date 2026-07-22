@@ -6,6 +6,8 @@ Phase 3A QR/V2 hardening: [`audits/VELOR_PHASE_3A_CANONICAL_V2_HARDENING_2026-07
 
 Phase 3B bounded modular-monolith refactor: [`audits/VELOR_PHASE_3B_BOUNDED_MODULAR_MONOLITH_REFACTOR_2026-07-22.md`](audits/VELOR_PHASE_3B_BOUNDED_MODULAR_MONOLITH_REFACTOR_2026-07-22.md).
 
+Phase 4 outbox and delivery reliability: [`audits/VELOR_PHASE_4_OUTBOX_DELIVERY_RELIABILITY_2026-07-22.md`](audits/VELOR_PHASE_4_OUTBOX_DELIVERY_RELIABILITY_2026-07-22.md).
+
 The repository contains product contracts as well as historical engineering evidence. This index prevents an old phase report from being mistaken for the current product or launch verdict.
 
 ## Current launch authority

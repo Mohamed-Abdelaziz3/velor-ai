@@ -103,6 +103,7 @@ def _publish_message_delivery_update(db, company_id: str, internal_message_id: s
         msg,
         status,
         provider_message_id=wa_message_id,
+        source="meta_delivery",
     )
 
 

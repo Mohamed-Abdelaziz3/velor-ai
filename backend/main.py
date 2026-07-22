@@ -76,6 +76,11 @@ from database import (
 )
 from services.context_engine import summarize_conversation
 from services.message_delivery import apply_message_delivery_update
+from services.delivery_reliability import (
+    EXTERNAL_API_ACK_ENDPOINT,
+    acknowledge_external_api_delivery,
+    external_api_ack_contract,
+)
 from brain import get_ai_response, generate_advanced_system_prompt, latest_quick_replies, groq_client
 from plan_config import get_limits, check_lead_quota, check_message_quota
 from prompt_limits import COMPANY_SYSTEM_PROMPT_MAX_CHARS, validate_company_system_prompt
@@ -609,6 +614,14 @@ class AckPayload(BaseModel):
     internal_message_id: Optional[str] = None
     wa_message_id: Optional[str] = None
     status: str
+    failure_reason: Optional[str] = Field(None, max_length=200)
+    timestamp: Optional[datetime] = None
+
+
+class ExternalDeliveryAckPayload(BaseModel):
+    internal_message_id: str = Field(..., min_length=1, max_length=64, pattern=r"^[\w\-:.]+$")
+    status: str = Field(..., pattern=r"^(sent|delivered|failed)$")
+    failure_reason: Optional[str] = Field(None, max_length=200)
     timestamp: Optional[datetime] = None
 
 
@@ -2485,6 +2498,7 @@ async def _chat_v2(
         find_reply_for_inbound,
     )
     from services.v2_turn_use_case import execute_v2_turn
+    from services.delivery_reliability import external_api_ack_contract
 
     if not data.external_message_id:
         raise HTTPException(
@@ -2620,6 +2634,11 @@ async def _chat_v2(
                 "redeliver_existing_reply": not (delivered and reply.wa_message_id),
                 "delivery_status": reply.delivery_status,
                 **({"response": response_envelope} if response_envelope else {}),
+                **(
+                    {"delivery_ack": external_api_ack_contract()}
+                    if channel_type == "EXTERNAL_API"
+                    else {}
+                ),
             }
         skipped_reason = _existing_auto_reply_skip_reason(
             db,
@@ -2725,12 +2744,15 @@ async def _chat_v2(
             "auto_reply_skipped": True,
             "reason": late_block_reason,
         }
-    return {
+    response_payload = {
         "reply": result["answer_text"],
         "internal_message_id": persisted["internal_id"],
         "delivery_status": "pending",
         **({"response": response_envelope} if response_envelope else {}),
     }
+    if channel_type == "EXTERNAL_API":
+        response_payload["delivery_ack"] = external_api_ack_contract()
+    return response_payload
 
 
 @app.post("/chat")
@@ -3279,6 +3301,55 @@ async def internal_company_exists(
     return {"success": True, "exists": True, "company_id": company_id}
 
 
+@app.post(EXTERNAL_API_ACK_ENDPOINT)
+async def external_api_delivery_ack(
+    payload: ExternalDeliveryAckPayload,
+    db: Session = Depends(get_db),
+    api_key: Optional[str] = Depends(api_key_header),
+):
+    """Record caller-confirmed delivery for an External API V2 reply."""
+    company = None
+    if api_key:
+        company = (
+            db.query(Company)
+            .filter(
+                Company.api_key_hash == hash_api_key(api_key),
+                Company.is_deleted == False,
+            )
+            .first()
+        )
+    if company is None:
+        raise HTTPException(status_code=401, detail="Unauthorized external delivery acknowledgement")
+
+    try:
+        result = acknowledge_external_api_delivery(
+            db,
+            company_id=company.company_id,
+            internal_message_id=payload.internal_message_id,
+            status=payload.status,
+            failure_reason=payload.failure_reason,
+            event_timestamp=payload.timestamp,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    if result.outcome == "not_found":
+        raise HTTPException(status_code=404, detail="Delivery intent not found")
+    if result.outcome == "not_external_api":
+        raise HTTPException(status_code=409, detail="Delivery intent is not an External API V2 message")
+    return {
+        "success": True,
+        "outcome": result.outcome,
+        "internal_message_id": result.internal_message_id,
+        "delivery_status": result.status,
+        **(
+            {"failure_reason": result.failure_reason}
+            if result.failure_reason
+            else {}
+        ),
+    }
+
+
 @app.post("/api/whatsapp/webhook/ack")
 async def whatsapp_webhook_ack(
     payload: AckPayload,
@@ -3310,6 +3381,8 @@ async def whatsapp_webhook_ack(
         payload.status,
         provider_message_id=payload.wa_message_id,
         event_timestamp=payload.timestamp,
+        failure_reason=payload.failure_reason,
+        source="whatsapp_gateway_ack",
     )
     if not result.status_changed:
         return {
@@ -3964,9 +4037,13 @@ async def dispatch_outbound_message(
             .first()
         )
         if msg:
-            msg.delivery_status = "failed"
-            db.add(MessageEvent(message_id=msg.id, status="failed", timestamp=datetime.now(timezone.utc)))
-            db.commit()
+            apply_message_delivery_update(
+                db,
+                msg,
+                "failed",
+                failure_reason="takeover_provider_failure",
+                source="takeover_delivery",
+            )
 
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:

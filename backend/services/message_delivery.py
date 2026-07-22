@@ -72,6 +72,8 @@ def apply_message_delivery_update(
     *,
     provider_message_id: str | None = None,
     event_timestamp: datetime | None = None,
+    failure_reason: str | None = None,
+    source: str | None = None,
     max_compare_and_set_attempts: int = 5,
 ) -> DeliveryUpdateResult:
     """Atomically update one message and append its observable state event.
@@ -84,6 +86,10 @@ def apply_message_delivery_update(
     message_id = message.id
     target = str(target_status or "").strip().casefold()
     provider_id = str(provider_message_id).strip() if provider_message_id else None
+    normalized_failure_reason = str(failure_reason or "").strip()[:200] or None
+    normalized_source = str(source or "").strip()[:80] or None
+    if target == "failed" and normalized_failure_reason is None:
+        normalized_failure_reason = "provider_reported_failure"
     timestamp = event_timestamp or datetime.now(timezone.utc)
     if timestamp.tzinfo is None:
         timestamp = timestamp.replace(tzinfo=timezone.utc)
@@ -187,11 +193,36 @@ def apply_message_delivery_update(
                                 "text": updated_message.message,
                                 "user_id": updated_message.user_id,
                                 "delivery_status": updated_message.delivery_status,
+                                **(
+                                    {
+                                        "failure_reason": normalized_failure_reason,
+                                        "source": normalized_source or "delivery_update",
+                                    }
+                                    if target == "failed"
+                                    else {}
+                                ),
                                 "timestamp": timestamp.isoformat(),
                             }
                         ),
                     )
                 )
+                if target == "failed":
+                    db.add(
+                        SystemEvent(
+                            company_id=updated_message.company_id,
+                            event_type="delivery.failed",
+                            entity_id=updated_message.internal_message_id,
+                            payload=json.dumps(
+                                {
+                                    "message_id": updated_message.internal_message_id,
+                                    "delivery_status": "failed",
+                                    "failure_reason": normalized_failure_reason,
+                                    "source": normalized_source or "delivery_update",
+                                    "timestamp": timestamp.isoformat(),
+                                }
+                            ),
+                        )
+                    )
             db.commit()
             return DeliveryUpdateResult(
                 status_changed,
