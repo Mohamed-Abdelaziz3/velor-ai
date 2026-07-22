@@ -28,9 +28,18 @@ export const createViteOptions = async (mode = 'development') => {
       },
     },
     optimizeDeps: {
-      // OneDrive can deny esbuild's temporary dependency scanner. Vite can
-      // transform these dependencies on demand during local development.
-      noDiscovery: mode === 'development',
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react-router-dom',
+        '@react-oauth/google',
+        'axios',
+        'framer-motion',
+        'lucide-react',
+        'react-hot-toast',
+        'react-icons',
+      ],
     },
     build: {
       sourcemap: false,

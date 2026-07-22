@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useMemo, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSend, FiAlertCircle, FiRefreshCw, FiMessageCircle, FiWifiOff } from 'react-icons/fi';
 import { publicClient } from '../services/api';
@@ -305,7 +305,7 @@ const PublicChat = () => {
                 <p className="text-velor-secondary text-sm max-w-sm leading-relaxed font-medium">
                     عذراً، هذه المحادثة غير مفعلة حالياً أو الرابط غير صحيح. يرجى مراجعة صاحب العمل.
                 </p>
-                <a href="/" className="mt-7 text-xs font-semibold text-velor-purple hover:text-velor-violet">اعرف المزيد عن VELOR</a>
+                <Link to="/" className="mt-7 text-xs font-semibold text-velor-purple hover:text-velor-violet">اعرف المزيد عن VELOR</Link>
             </div>
         );
     }
@@ -338,7 +338,7 @@ const PublicChat = () => {
                         </div>
                     </div>
                     </div>
-                    <a href="/" className="hidden shrink-0 opacity-70 transition hover:opacity-100 sm:block" aria-label="VELOR"><VelorLogo size={25} wordmarkClassName="text-xs" /></a>
+                    <Link to="/" className="hidden shrink-0 opacity-70 transition hover:opacity-100 sm:block" aria-label="VELOR"><VelorLogo size={25} wordmarkClassName="text-xs" /></Link>
                 </header>
 
                 {/* Chat Area */}
@@ -554,7 +554,7 @@ const PublicChat = () => {
                     </button>
                     </div>
                     <p className="mt-2.5 text-center text-[9px] leading-4 text-velor-muted">
-                        بإرسال رسالتك أنت توافق على استخدامها للرد ومتابعة طلبك لدى {companyName}. <a href="/privacy" className="text-velor-secondary underline-offset-2 hover:text-white hover:underline">الخصوصية</a>
+                        بإرسال رسالتك أنت توافق على استخدامها للرد ومتابعة طلبك لدى {companyName}. <Link to="/privacy" className="text-velor-secondary underline-offset-2 hover:text-white hover:underline">الخصوصية</Link>
                     </p>
                 </div>
             </div>

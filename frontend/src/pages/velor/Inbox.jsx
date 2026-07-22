@@ -227,6 +227,29 @@ export default function Inbox() {
     navigate(`/inbox/${selected.id}`);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      if (e.key.toLowerCase() === 'j') {
+        e.preventDefault();
+        setConversations((items) => {
+          const idx = items.findIndex((c) => String(c.id) === String(selectedId));
+          if (idx >= 0 && idx < items.length - 1) setSelectedId(items[idx + 1].id);
+          return items;
+        });
+      } else if (e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setConversations((items) => {
+          const idx = items.findIndex((c) => String(c.id) === String(selectedId));
+          if (idx > 0) setSelectedId(items[idx - 1].id);
+          return items;
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedId]);
+
   return (
     <div className="flex h-full w-full min-h-0 flex-1 flex-col p-3 sm:p-4 xl:p-5" dir="rtl" lang="ar">
       <div className="mx-auto grid h-full w-full min-h-0 max-w-[1620px] flex-1 overflow-hidden rounded-[1.25rem] border border-white/[0.075] bg-[#0d0f18]/94 shadow-[0_24px_80px_rgba(0,0,0,.3)] xl:grid-cols-[330px_minmax(460px,1fr)_318px]">
@@ -237,6 +260,7 @@ export default function Inbox() {
                 <p className="text-sm font-semibold text-white">الأولوية والمحادثات</p>
                 <p className="mt-0.5 text-[10px] text-velor-muted">{conversationTotal === null ? `تم تحميل ${conversations.length}` : `نعرض ${conversations.length} من ${conversationTotal}`}</p>
               </div>
+              <span className="hidden text-[9px] text-velor-muted xl:inline-block" title="استخدم J/K للتنقل بين المحادثات">J/K للتنقل</span>
             </div>
             <div className="relative mt-4">
               <Search className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-velor-muted" />
@@ -277,7 +301,7 @@ export default function Inbox() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge tone={selected.isPaused ? 'amber' : 'neutral'} className="hidden sm:inline-flex">{selected.isPaused ? 'المحادثة تحت الإدارة اليدوية' : 'VELOR يدير المحادثة'}</Badge>
-                  <Badge tone="neutral">معاينة للقراءة فقط</Badge>
+                  <Badge tone="green" dot>مساحة محادثة تفاعلية</Badge>
                 </div>
               </header>
 

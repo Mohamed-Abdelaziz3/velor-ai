@@ -103,6 +103,7 @@ const ErrorState = ({ onRetry }) => {
 };
 
 const WorkspaceContent = () => {
+    const { id } = useParams();
     const { isLoading, error, currentLead: lead, retryWorkspace } = useWorkspace();
     const [askVelorOpen, setAskVelorOpen] = useState(false);
     const [briefOpen, setBriefOpen] = useState(false);

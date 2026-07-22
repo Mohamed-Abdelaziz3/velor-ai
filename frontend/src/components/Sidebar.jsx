@@ -12,7 +12,7 @@ const navigation = [
   { path: '/dashboard', label: 'مركز المتابعة', shortLabel: 'المتابعة', icon: LayoutDashboard },
   { path: '/inbox', label: 'المحادثات', shortLabel: 'المحادثات', icon: MessageSquareText },
   { path: '/onboarding', label: 'القنوات', shortLabel: 'القنوات', icon: SlidersHorizontal },
-  { path: '/settings', label: 'المصادر', shortLabel: 'المصادر', title: 'الكتالوج والسياسات', icon: Settings },
+  { path: '/settings', label: 'الإعدادات', shortLabel: 'الإعدادات', title: 'الإعدادات — الكتالوج والسياسات', icon: Settings },
 ];
 
 const isActiveRoute = (pathname, path) => {
@@ -55,20 +55,6 @@ export default function Sidebar({ mode = 'all' }) {
           );
         })}
 
-        <span
-          className="mx-1 h-5 w-px bg-white/[0.08]"
-          aria-hidden="true"
-        />
-        <span
-          className="flex h-8 items-center gap-2 rounded-lg px-2 text-[10px] text-velor-muted"
-          title={connected ? 'التحديثات المباشرة متصلة' : 'التحديثات المباشرة غير متصلة'}
-        >
-          <span
-            className={cx('h-1.5 w-1.5 rounded-full', connected ? 'bg-emerald-400' : 'bg-rose-400')}
-            style={{ boxShadow: connected ? '0 0 8px rgba(52,211,153,.7)' : '0 0 8px rgba(251,113,133,.55)' }}
-          />
-          <span className="hidden 2xl:inline">{connected ? 'متصل' : 'غير متصل'}</span>
-        </span>
       </nav>}
 
       {mode !== 'desktop' && <nav
