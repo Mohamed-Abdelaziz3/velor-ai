@@ -1,0 +1,29 @@
+{
+  "fixture_name": "VELOR deterministic commercial-intelligence proof fixture",
+  "provenance": "trusted_commercial_intelligence_test_fixture",
+  "disclaimer": "Synthetic test conversations. They are not real business results.",
+  "conversations": [
+    {"key": "pro_1", "product": "Arvena Ergo Pro", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PRICE_REVEALED", "OBJECTION_EXPRESSED"], "objection": "PRICE_RESISTANCE"},
+    {"key": "pro_2", "product": "Arvena Ergo Pro", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PRICE_REVEALED", "OBJECTION_EXPRESSED"], "objection": "PRICE_RESISTANCE"},
+    {"key": "pro_3", "product": "Arvena Ergo Pro", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_COMPARED", "PRICE_REVEALED", "OBJECTION_EXPRESSED"], "objection": "PRICE_RESISTANCE"},
+    {"key": "pro_4", "product": "Arvena Ergo Pro", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_COMPARED", "PRICE_REVEALED", "OBJECTION_EXPRESSED"], "objection": "PRICE_RESISTANCE"},
+    {"key": "pro_5", "product": "Arvena Ergo Pro", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PRICE_REVEALED"]},
+    {"key": "pro_6", "product": "Arvena Ergo Pro", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PURCHASE_INTENT_EXPRESSED"]},
+
+    {"key": "one_1", "product": "Arvena Ergo One", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PURCHASE_INTENT_EXPRESSED", "PURCHASE_COMMITMENT"]},
+    {"key": "one_2", "product": "Arvena Ergo One", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PURCHASE_INTENT_EXPRESSED"]},
+    {"key": "one_3", "product": "Arvena Ergo One", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PRODUCT_SELECTED"]},
+    {"key": "one_4", "product": "Arvena Ergo One", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PURCHASE_EXECUTION_REQUEST"]},
+    {"key": "one_5", "product": "Arvena Ergo One", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED"]},
+
+    {"key": "lite_1", "product": "Arvena Ergo Lite", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PURCHASE_INTENT_EXPRESSED"]},
+    {"key": "lite_2", "product": "Arvena Ergo Lite", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED", "PURCHASE_COMMITMENT"]},
+    {"key": "lite_3", "product": "Arvena Ergo Lite", "events": ["PRODUCT_ASKED_ABOUT", "PRODUCT_CONSIDERED"]},
+
+    {"key": "gap_1", "product": "Arvena Ergo Pro", "events": ["KNOWLEDGE_GAP_HIT"], "knowledge_topic": "shipping_policy"},
+    {"key": "gap_2", "product": "Arvena Ergo One", "events": ["KNOWLEDGE_GAP_HIT"], "knowledge_topic": "shipping_policy"},
+    {"key": "gap_3", "product": "Arvena Ergo Lite", "events": ["KNOWLEDGE_GAP_HIT"], "knowledge_topic": "shipping_policy"},
+    {"key": "waiting_1", "product": "Arvena Ergo Pro", "events": ["OWNER_INTERVENTION_REQUIRED", "WAITING_ON_US"]},
+    {"key": "waiting_2", "product": "Arvena Ergo One", "events": ["OWNER_INTERVENTION_REQUIRED", "WAITING_ON_US"]}
+  ]
+}

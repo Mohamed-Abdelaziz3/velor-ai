@@ -1,0 +1,192 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-hygiene:
+    name: Repository hygiene / secrets and artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check repository hygiene
+        run: python tools/check_repository_hygiene.py
+
+  backend:
+    name: Backend / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      ENV: test
+      PYTHONUTF8: "1"
+      JWT_SECRET: ci-only-secret-with-at-least-32-characters
+      NODE_INTERNAL_SECRET: ci-only-node-secret
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.lock
+            backend/requirements-dev.lock
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.lock
+
+      - name: Verify exact Python lock
+        run: python ../tools/verify_locked_python.py
+
+      - name: Run backend test suite
+        run: python -m pytest -q
+
+  backend-postgres:
+    name: Backend / PostgreSQL 16 migration and isolation smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: velor_ci
+          POSTGRES_USER: velor_ci
+          POSTGRES_PASSWORD: velor_ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U velor_ci -d velor_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      ENV: test
+      PYTHONUTF8: "1"
+      DATABASE_URL: postgresql+psycopg://velor_ci:velor_ci_password@127.0.0.1:5432/velor_ci
+      JWT_SECRET: ci-postgres-secret-with-at-least-32-characters
+      NODE_INTERNAL_SECRET: ci-postgres-node-secret-with-at-least-32-characters
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.lock
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.lock
+
+      - name: Verify exact Python runtime lock
+        run: python ../tools/verify_locked_python.py --runtime-only
+
+      - name: Upgrade PostgreSQL schema to head
+        run: python -m alembic upgrade head
+
+      - name: Verify PostgreSQL runtime and tenant isolation
+        run: python scripts/postgres_runtime_smoke.py
+
+  frontend:
+    name: Frontend / test, lint, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Audit frontend production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Run frontend contract tests
+        run: npm test
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build production bundle
+        run: npm run build
+
+  whatsapp-gateway:
+    name: WhatsApp QR gateway / syntax and lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Verify dependency lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Audit gateway dependencies
+        run: npm audit --audit-level=high
+
+      - name: Check gateway syntax
+        run: node --check whatsapp_gate.js

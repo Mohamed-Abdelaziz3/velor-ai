@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>VELOR</title>
+  <defs>
+    <linearGradient id="velor-favicon-gradient" x1="8" y1="7" x2="56" y2="55" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D44BFF"/>
+      <stop offset=".5" stop-color="#8B3DFF"/>
+      <stop offset="1" stop-color="#3978FF"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#velor-favicon-gradient)" d="M4.5 8.5h15.8c3.9 0 7.5 2.09 9.45 5.48L36 24.82l6.25-10.84A10.91 10.91 0 0 1 51.7 8.5h7.8L40.8 47.52A10 10 0 0 1 32 53a10 10 0 0 1-8.8-5.48L4.5 8.5Z"/>
+</svg>

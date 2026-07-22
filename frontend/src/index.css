@@ -1,0 +1,733 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   VELOR DESIGN SYSTEM — WORLD-CLASS DARK UI
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Core Background Palette ── */
+  --velor-bg-deep: #020206;
+  --velor-bg: #06060f;
+  --velor-canvas: #09091a;
+  --velor-surface-0: #0b0b1a;
+  --velor-surface-1: #0e0e1e;
+  --velor-surface-2: #121228;
+  --velor-surface-3: #161630;
+  --velor-surface-hover: #1c1c38;
+
+  /* ── Border Tokens ── */
+  --velor-border-subtle: rgba(255, 255, 255, 0.04);
+  --velor-border: rgba(255, 255, 255, 0.08);
+  --velor-border-strong: rgba(255, 255, 255, 0.16);
+  --velor-border-glow: rgba(139, 92, 246, 0.4);
+
+  /* ── Text Tokens ── */
+  --velor-text: #f0eeff;
+  --velor-text-secondary: #b0aacb;
+  --velor-text-muted: #6b6585;
+
+  /* ── Brand Colors ── */
+  --velor-purple: #8b5cf6;
+  --velor-purple-hi: #a78bfa;
+  --velor-violet: #c4b5fd;
+  --velor-indigo: #6366f1;
+  --velor-blue: #38bdf8;
+  --velor-cyan: #22d3ee;
+  --velor-green: #34d399;
+  --velor-emerald: #10b981;
+  --velor-amber: #f59e0b;
+  --velor-orange: #fb923c;
+  --velor-red: #f87171;
+  --velor-rose: #fb7185;
+  --velor-pink: #f472b6;
+
+  /* ── Gradients ── */
+  --velor-gradient: linear-gradient(135deg, #c084fc 0%, #8b5cf6 45%, #6366f1 100%);
+  --velor-gradient-vivid: linear-gradient(135deg, #e879f9 0%, #a855f7 40%, #6366f1 80%, #3b82f6 100%);
+  --velor-gradient-soft: linear-gradient(135deg, rgba(192, 132, 252, 0.12), rgba(99, 102, 241, 0.06));
+  --velor-gradient-mesh: radial-gradient(ellipse at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(99, 102, 241, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
+  --velor-gradient-aurora: linear-gradient(135deg, rgba(232, 121, 249, 0.08) 0%, rgba(139, 92, 246, 0.12) 30%, rgba(99, 102, 241, 0.08) 60%, rgba(56, 189, 248, 0.05) 100%);
+
+  /* ── Glow & Shadow ── */
+  --velor-glow: 0 0 0 1px rgba(139, 92, 246, 0.22), 0 12px 40px rgba(88, 52, 214, 0.18);
+  --velor-glow-strong: 0 0 0 1px rgba(192, 132, 252, 0.35), 0 0 28px rgba(120, 70, 230, 0.22);
+  --velor-glow-subtle: 0 0 0 1px rgba(139, 92, 246, 0.12), 0 6px 20px rgba(88, 52, 214, 0.09);
+  --velor-glow-blue: 0 0 0 1px rgba(56, 189, 248, 0.2), 0 6px 20px rgba(56, 189, 248, 0.1);
+  --velor-glow-green: 0 0 0 1px rgba(52, 211, 153, 0.2), 0 6px 20px rgba(52, 211, 153, 0.09);
+  --velor-focus: 0 0 0 3px rgba(139, 92, 246, 0.28), 0 0 0 1px rgba(139, 92, 246, 0.5);
+  --velor-shadow-card: 0 1px 0 0 rgba(255, 255, 255, 0.035) inset, 0 16px 48px rgba(0, 0, 0, 0.32);
+  --velor-shadow-panel: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 24px 72px rgba(0, 0, 0, 0.4);
+  --velor-shadow-popup: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset, 0 32px 96px rgba(0, 0, 0, 0.5);
+
+  /* ── Shape ── */
+  --velor-radius-sm: 0.5rem;
+  --velor-radius-control: 0.875rem;
+  --velor-radius-card: 1.25rem;
+  --velor-radius-panel: 1.5rem;
+  --velor-radius-xl: 2rem;
+
+  /* ── Motion ── */
+  --velor-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --velor-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --velor-ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--velor-bg-deep);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% -10%, rgba(99, 102, 241, 0.14), transparent),
+    radial-gradient(ellipse 60% 50% at -5% 90%, rgba(56, 189, 248, 0.07), transparent),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(139, 92, 246, 0.04), transparent),
+    var(--velor-bg);
+  color: var(--velor-text);
+  font-family: 'Vazirmatn', 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--velor-focus);
+  border-radius: var(--velor-radius-sm);
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.4);
+  color: #fff;
+}
+
+.text-bidi {
+  unicode-bidi: plaintext;
+}
+
+.metric-numbers {
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENT LAYER
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ── Panels & Cards ── */
+  .velor-panel {
+    position: relative;
+    border: 1px solid var(--velor-border-subtle);
+    border-radius: var(--velor-radius-panel);
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, transparent 40%),
+      rgba(10, 10, 22, 0.6);
+    backdrop-filter: blur(48px) saturate(1.8);
+    -webkit-backdrop-filter: blur(48px) saturate(1.8);
+    box-shadow: var(--velor-shadow-panel);
+    overflow: hidden;
+  }
+
+  .velor-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--velor-gradient-aurora);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .velor-card {
+    position: relative;
+    border: 1px solid var(--velor-border-subtle);
+    border-radius: var(--velor-radius-card);
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, transparent 80%),
+      rgba(14, 14, 30, 0.4);
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    box-shadow: var(--velor-shadow-card);
+    transition:
+      transform 220ms var(--velor-ease),
+      border-color 220ms ease,
+      background-color 220ms ease,
+      box-shadow 220ms ease;
+    overflow: hidden;
+  }
+
+  .velor-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .velor-card-interactive:hover {
+    transform: translateY(-3px) scale(1.004);
+    border-color: var(--velor-border);
+    box-shadow: var(--velor-glow-subtle), var(--velor-shadow-card);
+  }
+
+  .velor-card-interactive:active {
+    transform: translateY(0) scale(0.998);
+  }
+
+  /* ── Buttons ── */
+  .velor-button-primary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(220, 190, 255, 0.35);
+    border-radius: var(--velor-radius-control);
+    background: var(--velor-gradient);
+    padding: 0.65rem 1.25rem;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+      0 8px 32px rgba(105, 56, 220, 0.3),
+      0 2px 8px rgba(105, 56, 220, 0.2);
+    transition:
+      transform 180ms var(--velor-ease-spring),
+      box-shadow 180ms ease,
+      filter 180ms ease;
+  }
+
+  .velor-button-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent 60%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .velor-button-primary:hover {
+    transform: translateY(-1px) scale(1.008);
+    box-shadow: var(--velor-glow-strong);
+    filter: brightness(1.06);
+  }
+
+  .velor-button-primary:active {
+    transform: scale(0.972);
+    transition-duration: 80ms;
+  }
+
+  .velor-button-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    transform: none;
+    filter: none;
+    box-shadow: none;
+  }
+
+  .velor-button-secondary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--velor-border);
+    border-radius: var(--velor-radius-control);
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.02) 100%);
+    padding: 0.65rem 1.25rem;
+    color: var(--velor-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset;
+    transition:
+      transform 180ms var(--velor-ease),
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .velor-button-secondary:hover {
+    transform: translateY(-1px);
+    border-color: var(--velor-border-strong);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset, 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .velor-button-secondary:active {
+    transform: scale(0.982);
+    transition-duration: 80ms;
+  }
+
+  /* ── Inputs ── */
+  .velor-input {
+    width: 100%;
+    min-height: 2.875rem;
+    border: 1px solid var(--velor-border-subtle);
+    border-radius: var(--velor-radius-control);
+    background:
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.1)),
+      rgba(6, 6, 15, 0.7);
+    padding: 0.75rem 1rem;
+    color: var(--velor-text);
+    font-size: 0.875rem;
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset, 0 2px 8px rgba(0, 0, 0, 0.15) inset;
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .velor-input::placeholder {
+    color: rgba(107, 101, 133, 0.7);
+  }
+
+  .velor-input:hover {
+    border-color: var(--velor-border);
+    background:
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.025), rgba(0, 0, 0, 0.08)),
+      rgba(8, 8, 18, 0.8);
+  }
+
+  .velor-input:focus {
+    border-color: rgba(139, 92, 246, 0.7);
+    background:
+      linear-gradient(to bottom, rgba(139, 92, 246, 0.04), rgba(0, 0, 0, 0.05)),
+      rgba(9, 9, 20, 0.95);
+    box-shadow:
+      0 0 0 3px rgba(139, 92, 246, 0.2),
+      0 0 0 1px rgba(139, 92, 246, 0.5),
+      0 2px 8px rgba(0, 0, 0, 0.15) inset;
+    outline: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY LAYER
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+
+  /* ── Grid Pattern ── */
+  .velor-grid-bg {
+    background-image:
+      linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .velor-grid-bg-fine {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* ── Noise Texture ── */
+  .velor-noise {
+    position: relative;
+  }
+
+  .velor-noise::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: '';
+    opacity: 0.25;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+    border-radius: inherit;
+  }
+
+  /* ── Text Effects ── */
+  .velor-glow-text {
+    background: linear-gradient(115deg, #fff 10%, #c4b5fd 45%, #818cf8 70%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .velor-glow-text-purple {
+    background: linear-gradient(115deg, #f0e6ff 0%, #c084fc 40%, #a855f7 70%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .velor-glow-text-vivid {
+    background: var(--velor-gradient-vivid);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ── Gradient Border ── */
+  .velor-gradient-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .velor-gradient-border::before {
+    position: absolute;
+    z-index: -1;
+    inset: -1px;
+    border-radius: inherit;
+    content: '';
+    background: linear-gradient(135deg,
+        rgba(192, 132, 252, 0.6),
+        rgba(99, 102, 241, 0.25) 50%,
+        rgba(56, 189, 248, 0.15) 100%);
+  }
+
+  /* ── Glassmorphism ── */
+  .velor-glass {
+    background: rgba(14, 14, 30, 0.55);
+    backdrop-filter: blur(32px) saturate(1.8);
+    -webkit-backdrop-filter: blur(32px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .velor-glass-strong {
+    background: rgba(10, 10, 22, 0.45);
+    backdrop-filter: blur(48px) saturate(2);
+    -webkit-backdrop-filter: blur(48px) saturate(2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ── Shimmer ── */
+  .velor-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .velor-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.04) 50%,
+        transparent);
+    animation: shimmer 2.8s ease-in-out infinite;
+  }
+
+  /* ── Animation Classes ── */
+  .animate-velor-in {
+    animation: velor-in 560ms var(--velor-ease) both;
+  }
+
+  .animate-velor-in-delayed {
+    animation: velor-in 660ms 100ms var(--velor-ease) both;
+  }
+
+  .animate-velor-in-slow {
+    animation: velor-in 800ms 200ms var(--velor-ease) both;
+  }
+
+  .animate-signal-pulse {
+    animation: signal-pulse 2.4s ease-in-out infinite;
+  }
+
+  .animate-flow-dash {
+    animation: flow-dash 10s linear infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-aurora {
+    animation: aurora 12s ease-in-out infinite alternate;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin 8s linear infinite;
+  }
+
+  .animate-ping-slow {
+    animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* ── Scrollbar ── */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* ── Hover Lift ── */
+  .hover-lift {
+    transition: transform 200ms var(--velor-ease);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* ── Glow on hover ── */
+  .hover-glow:hover {
+    box-shadow: var(--velor-glow-subtle);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes velor-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes signal-pulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.3);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+  }
+}
+
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -160;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 160%;
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes aurora {
+  0% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.65;
+  }
+
+  100% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 28px rgba(139, 92, 246, 0.3);
+  }
+}
+
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  75%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(60px) rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg) translateX(60px) rotate(-360deg);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SPECIAL COMPONENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Sidebar nav active indicator */
+.nav-active-indicator {
+  position: absolute;
+  inset-inline-end: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 99px;
+  background: var(--velor-gradient);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.7), 0 0 24px rgba(139, 92, 246, 0.4);
+}
+
+/* Gradient line separator */
+.velor-separator {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--velor-border), transparent);
+}
+
+/* Badge shine — runs once on load, not looping */
+.velor-badge-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+
+.react-hot-toast>div {
+  font-family: 'Vazirmatn', 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

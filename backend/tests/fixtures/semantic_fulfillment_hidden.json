@@ -1,0 +1,16 @@
+{
+  "schema": "velor_semantic_fulfillment_hidden_v1",
+  "variants": ["", "؟", "!", " بليز", " دلوقتي", " يا ريت", " pls", " بسرعة", " لو سمحت", "؟!", " حالاً", " من فضلك", " كده", " بجد", " مرة تانية"],
+  "cases": [
+    {"id": "hidden-color", "turn": "لون الكرسي المتاح من موديل Arvena ايه", "capability": "PRODUCT_DETAILS", "plan_type": "PRODUCT_SPECS", "obligation": "ATTRIBUTE_QUESTION", "attribute": "COLOR", "outcome": "EXPLICIT_UNKNOWN"},
+    {"id": "hidden-dimensions", "turn": "المقاسات بتاعة Ergo One كام", "capability": "PRODUCT_DETAILS", "plan_type": "PRODUCT_SPECS", "obligation": "ATTRIBUTE_QUESTION", "attribute": "DIMENSIONS", "outcome": "EXPLICIT_UNKNOWN"},
+    {"id": "hidden-support-sound", "turn": "الكرسي بيعمل صوت لما اتحرك", "capability": "CLARIFICATION", "plan_type": "CLARIFY", "obligation": "PRODUCT_SUPPORT_ISSUE", "outcome": "CLARIFICATION"},
+    {"id": "hidden-delivery-issue", "turn": "وصلتني الشحنة وفيها جزء ناقص", "capability": "CLARIFICATION", "plan_type": "CLARIFY", "obligation": "ORDER_SUPPORT_ISSUE", "outcome": "CLARIFICATION"},
+    {"id": "hidden-recency", "turn": "هو في موديل نازل جديد بعد Ergo", "capability": "PRODUCT_DISCOVERY", "plan_type": "CATEGORY_DISCOVERY", "obligation": "RECENCY_QUESTION", "outcome": "EXPLICIT_UNKNOWN"},
+    {"id": "hidden-price-correction", "turn": "لا السعر مناسب كمل", "capability": "CLARIFICATION", "plan_type": "CLARIFY", "obligation": "CONTEXTUAL_POLARITY_UPDATE", "outcome": "DIRECT_ANSWER", "history": "سعر Arvena Ergo One هو 6900 EGP"},
+    {"id": "hidden-no-call", "turn": "مش حابب مكالمة خلينا شات", "capability": "CLARIFICATION", "plan_type": "CLARIFY", "obligation": "NEGATIVE_CONTACT", "outcome": "DIRECT_ANSWER"},
+    {"id": "hidden-capacity", "turn": "عايز اعرف اقصى وزن للكرسي", "capability": "UNKNOWN_COMMERCIAL_FACT", "plan_type": "UNKNOWN_INFORMATION", "obligation": "ATTRIBUTE_QUESTION", "attribute": "WEIGHT_CAPACITY", "outcome": "EXPLICIT_UNKNOWN"},
+    {"id": "hidden-material", "turn": "ايه خامة الموديل ده", "capability": "PRODUCT_DETAILS", "plan_type": "PRODUCT_SPECS", "obligation": "ATTRIBUTE_QUESTION", "attribute": "MATERIAL", "outcome": "EXPLICIT_UNKNOWN"},
+    {"id": "hidden-payment", "turn": "كيف ادفع واكمل الاوردر", "capability": "PAYMENT_PROCESS", "plan_type": "POLICY_ANSWER", "policy_kind": "payment_and_order", "obligation": "POLICY_QUESTION", "outcome": "EXPLICIT_UNKNOWN"}
+  ]
+}

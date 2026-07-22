@@ -1,0 +1,53 @@
+# ── Web Framework ──────────────────────────────
+fastapi>=0.115.0,<1.0
+uvicorn[standard]>=0.32.0,<1.0
+httpx>=0.28.0,<1.0
+
+# ── Validation ─────────────────────────────────
+pydantic[email]>=2.10.0,<3.0
+python-multipart>=0.0.20,<1.0
+
+# ── Rate Limiting (HTTP layer) ─────────────────
+slowapi>=0.1.9,<1.0
+
+# ── Database ───────────────────────────────────
+sqlalchemy>=2.0.0,<3.0
+alembic>=1.14.0,<2.0
+psycopg[binary]>=3.2.0,<4.0
+
+# ── Auth & Crypto ──────────────────────────────
+passlib[bcrypt]>=1.7.4,<2.0
+# passlib 1.7.4 performs a backend self-test that bcrypt 5 rejects because
+# bcrypt 5 changed long-password handling. Keep fresh installs bootable until
+# the password stack is migrated away from passlib.
+bcrypt>=4.0.1,<4.1
+python-jose[cryptography]>=3.3.0,<4.0
+sse-starlette>=3.4.5,<4.0
+
+# ── AI ─────────────────────────────────────────
+groq>=0.15.0,<1.0
+
+# ── Google Sheets / Auth ──────────────────────────────
+gspread>=6.1.0,<7.0
+oauth2client>=4.1.3,<5.0
+google-auth>=2.20.0,<3.0
+
+# ── Background Jobs ───────────────────────────
+rq>=2.0.0,<3.0
+redis>=5.0.0,<6.0
+
+# ── Scheduler ─────────────────────────────────
+apscheduler>=3.10.0,<4.0
+
+# ── Config ─────────────────────────────────────
+python-dotenv>=1.0.0,<2.0
+
+# -- RAG -----------------------------------------
+PyPDF2>=3.0.0
+python-docx>=0.8.11
+scikit-learn>=1.3.0
+numpy>=1.24.0
+
+# -- Catalog import -------------------------------
+# XLSX import is a product capability, not a test-only extra.
+openpyxl>=3.1.0,<4.0

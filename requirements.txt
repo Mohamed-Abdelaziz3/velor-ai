@@ -1,0 +1,4 @@
+# Canonical exact Python dependencies live with the FastAPI application.
+# Dependency-policy ranges remain in backend/requirements.txt; this root wrapper
+# keeps common installs reproducible without maintaining a second dependency list.
+-r backend/requirements.lock

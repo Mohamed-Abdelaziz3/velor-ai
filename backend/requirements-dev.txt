@@ -1,0 +1,5 @@
+# Reproducible local and CI test environment.
+-r requirements.txt
+
+pytest>=8.3.0,<10.0
+pytest-asyncio>=0.24.0,<2.0

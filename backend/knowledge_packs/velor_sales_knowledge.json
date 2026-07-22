@@ -1,0 +1,73 @@
+{
+  "name": "VELOR Sales Knowledge Pack",
+  "version": "2026-07-09",
+  "source_of_truth": "repository_runtime_capabilities",
+  "identity": {
+    "product_name": "VELOR",
+    "category": "AI sales conversation copilot and web chat runtime",
+    "positioning": "VELOR helps business owners capture, answer, and act on customer buying intent inside sales conversations."
+  },
+  "mission": [
+    "Prevent purchase intent from being lost in unhandled chat conversations.",
+    "Keep owner decisions grounded in customer messages, structured catalog facts, and explicit evidence.",
+    "Give customers a public web chat channel and give owners a workspace for review, takeover, and follow-up."
+  ],
+  "implemented_capabilities": [
+    {
+      "name": "Public Web Chat",
+      "truth": "Opt-in tenant web chat with visitor sessions, public-safe message history, channel-scoped idempotency, rate limiting, and catalog-grounded direct answers."
+    },
+    {
+      "name": "Owner Workspace",
+      "truth": "Customer workspace shows conversation history, Web Chat identity, suggested replies, takeover state, customer intelligence, and manual outbound replies."
+    },
+    {
+      "name": "Canonical Intelligence",
+      "truth": "The canonical reply path prepares sales state, objection intelligence, customer needs, recommendation decision, next best action, relationship context, memory, communication profile, and trusted product context before generating or returning a reply."
+    },
+    {
+      "name": "Owner Attention Projection",
+      "truth": "The owner attention endpoint emits only WAITING_ON_US, READY_TO_CLOSE, STUCK_ON_OBJECTION, and REGRESSING items when supported by operational state, sales state, or explicit evidence."
+    },
+    {
+      "name": "WhatsApp QR Beta",
+      "truth": "The repository contains WhatsApp QR session/status and outbound dispatch flows. Present it as beta/self-hosted connectivity, not as the official WhatsApp Business Cloud API."
+    }
+  ],
+  "sales_claim_boundaries": {
+    "do_not_claim": [
+      "Guaranteed revenue uplift",
+      "Guaranteed conversion rate",
+      "Guaranteed response-time SLA",
+      "Official WhatsApp Business Cloud API support unless separately integrated",
+      "Instagram DM support",
+      "Telegram support",
+      "Published customer case studies",
+      "Production uptime guarantee"
+    ],
+    "allowed_claims": [
+      "Can reduce missed customer follow-up when configured and monitored",
+      "Can answer product and price questions only from trusted structured catalog data",
+      "Can flag owner attention items when evidence exists",
+      "Can support a controlled pilot with explicit success metrics"
+    ]
+  },
+  "pilot_offer": {
+    "best_fit": [
+      "Businesses receiving repeated product, price, availability, or start-process questions in chat",
+      "Owners who need visibility into unanswered or high-intent conversations",
+      "Teams that can provide structured catalog or service data"
+    ],
+    "not_best_fit": [
+      "Businesses that require unsupported channels as a launch requirement",
+      "Businesses unwilling to provide trusted product/service facts",
+      "Use cases requiring legal, medical, or regulated financial advice"
+    ],
+    "success_metrics": [
+      "Fewer unanswered customer turns",
+      "More conversations with explicit next action",
+      "Catalog answers matching trusted uploaded data",
+      "Owner review of attention projections"
+    ]
+  }
+}

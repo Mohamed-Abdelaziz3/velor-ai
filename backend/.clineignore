@@ -1,0 +1,9 @@
+.venv/
+venv/
+env/
+__pycache__/
+.git/
+.idea/
+.vscode/
+node_modules/
+site-packages/
