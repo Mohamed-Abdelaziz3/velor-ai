@@ -3,6 +3,10 @@
 Audit date: 2026-07-19  
 Authority: this document supersedes the pre-remediation audits and phase reports for current launch decisions.
 
+> Publication note: Phase 8 supersedes only the GitHub-repository status in this
+> snapshot. Product and external launch gates below remain open unless a later
+> code-backed report closes them.
+
 ## Executive decision
 
 | Launch mode | Decision | Conditions |
@@ -165,9 +169,9 @@ Consent is now persisted, but the product still needs a declared support channel
 
 ### 7. GitHub publication is not complete
 
-The repository has CI, Dependabot, contribution/security documentation, ignored local databases/logs/remediation scripts, clean demo screenshots, and a professional README. It still has no first commit, remote, or chosen license. A license is a legal owner decision and was not guessed.
+The local repository has an intentional commit history, CI, Dependabot, contribution/security documentation, ignored local artifacts, demo-labelled screenshots, and a current architecture/ADR set. A public GitHub repository, remote, push, and license have deliberately not been created by Phase 8. The license remains a legal owner decision.
 
-Exit criteria: choose public vs private visibility and a license, run a secret scan, make the intentional first commit on `main`, connect the remote, push, and require the clean GitHub Actions run.
+Exit criteria: choose public vs private visibility and a license, review the Phase 8 audit, create the GitHub repository and remote intentionally, push the audited branch, enable branch protection, and require a clean GitHub Actions run.
 
 ## Repository and old-layer decision
 

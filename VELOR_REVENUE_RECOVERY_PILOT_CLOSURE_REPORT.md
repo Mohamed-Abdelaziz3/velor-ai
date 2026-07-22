@@ -1,5 +1,9 @@
 # VELOR Revenue Recovery Pilot Closure Report
 
+> Historical, scope-bound acceptance evidence. This report does not replace the
+> current README, architecture documentation, GitHub-readiness audit, or
+> production/market validation.
+
 ## Executive verdict
 
 **ACCEPTED**
@@ -149,6 +153,6 @@ No source files were deleted.
 2. **WhatsApp was disconnected in the authenticated QA environment.** The full Web Chat owner loop passed, but a live WhatsApp provider round trip was not exercised.
 3. **The copied local runtime SQLite database has no Alembic stamp.** Fresh-head and known prior-head migration paths are proven, but that particular unstamped database must be reconciled to a known revision before applying migrations; silently stamping it would be unsafe.
 4. **Live AI prose quality was not certified.** The available environment lacks a valid configured Groq credential, so the provider-backed Egyptian multi-turn campaign cannot establish live response quality.
-5. **The original OneDrive source directory was outside the writable workspace.** It remains untouched. The tested implementation is supplied as a secret-free source archive and must be overlaid or reviewed into that working directory by an authorized operator.
+5. **Repository publication was outside this mission.** The tested source handoff did not create a public repository, choose a license, or push to a hosting provider; those actions require a separate audited publication phase.
 
 The 174 backend deprecation warnings and 14 existing frontend unused-code warnings are cleanup debt, not acceptance blockers. Generated databases, logs, caches, build output, dependency directories, `.env` files, and credentials are intentionally excluded from the source handoff.
