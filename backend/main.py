@@ -1938,48 +1938,37 @@ async def public_chat_send(
             public_response = None
             public_msg_id = None
             if use_v2:
-                from services.velor_chat_v2 import get_v2_ai_response
                 from services.public_chat_turn_service import (
                     cancel_persisted_auto_reply,
                     current_auto_reply_block_reason,
-                    persist_v2_public_turn_atomic,
                 )
-                response_coro = get_v2_ai_response(
+                from services.v2_turn_use_case import execute_v2_turn
+                response_coro = execute_v2_turn(
                     db=db,
-                    source_message=inc_msg,
                     company=company,
                     lead=lead,
-                    background_tasks=background_tasks,
-                )
-                if reply_timeout_seconds > 0:
-                    v2_res = await asyncio.wait_for(response_coro, timeout=reply_timeout_seconds)
-                else:
-                    v2_res = await response_coro
-                    
-                reply = v2_res["answer_text"]
-                trace = v2_res["trace"]
-                public_response = v2_res.get("response_envelope")
-                lead_to_save = trace.get("lead_to_save")
-
-                persisted_turn = persist_v2_public_turn_atomic(
-                    db=db,
+                    source_message=inc_msg,
                     company_id=company_id,
                     lead_id=lead.id,
                     user_id=visitor_id,
                     customer_text=message_text,
-                    assistant_text=reply,
                     inbound_internal_id=inc_internal_id,
                     processing_claim_attempt=processing_claim_attempt,
-                    lead_update=lead_to_save,
-                    decision=trace.get("action_decision"),
-                    sales_snapshot=trace.get("sales_snapshot"),
-                    objection_snapshot=trace.get("objection_snapshot"),
-                    recommendation_decision=trace.get("recommendation_decision"),
-                    response_envelope=public_response,
-                    conversation_action=trace.get("conversation_action"),
-                    trace=trace,
+                    background_tasks=background_tasks,
+                    channel_type="VELOR_WEB_CHAT",
+                    source_route="/api/public/chat",
                     enforce_auto_reply_guard=True,
                 )
+                if reply_timeout_seconds > 0:
+                    v2_turn = await asyncio.wait_for(response_coro, timeout=reply_timeout_seconds)
+                else:
+                    v2_turn = await response_coro
+
+                v2_res = v2_turn["result"]
+                reply = v2_res["answer_text"]
+                trace = v2_turn["trace"]
+                public_response = v2_turn.get("response_envelope")
+                persisted_turn = v2_turn["persisted"]
 
                 if not persisted_turn:
                     return JSONResponse(
@@ -2494,9 +2483,8 @@ async def _chat_v2(
         cancel_persisted_auto_reply,
         current_auto_reply_block_reason,
         find_reply_for_inbound,
-        persist_v2_public_turn_atomic,
     )
-    from services.velor_chat_v2 import get_v2_ai_response
+    from services.v2_turn_use_case import execute_v2_turn
 
     if not data.external_message_id:
         raise HTTPException(
@@ -2659,45 +2647,20 @@ async def _chat_v2(
         timeout_seconds = float(os.getenv("WHATSAPP_REPLY_TIMEOUT_SECONDS", "40"))
     except (TypeError, ValueError):
         timeout_seconds = 40.0
-    response_coro = get_v2_ai_response(
+    response_coro = execute_v2_turn(
         db=db,
-        source_message=inbound,
         company=company,
         lead=lead,
-        background_tasks=background_tasks,
-        channel_type=channel_type,
-        source_route="/chat",
-    )
-    try:
-        result = (
-            await asyncio.wait_for(response_coro, timeout=timeout_seconds)
-            if timeout_seconds > 0
-            else await response_coro
-        )
-    except Exception:
-        db.rollback()
-        raise
-
-    trace = result["trace"]
-    response_envelope = result.get("response_envelope")
-    persisted = persist_v2_public_turn_atomic(
-        db=db,
+        source_message=inbound,
         company_id=company.company_id,
         lead_id=lead.id,
         user_id=data.user_id,
         customer_text=data.message,
-        assistant_text=result["answer_text"],
         inbound_internal_id=inbound.internal_message_id,
         processing_claim_attempt=inbound.processing_attempts,
-        lead_update=trace.get("lead_to_save"),
-        decision=trace.get("action_decision"),
-        sales_snapshot=trace.get("sales_snapshot"),
-        objection_snapshot=trace.get("objection_snapshot"),
-        recommendation_decision=trace.get("recommendation_decision"),
-        response_envelope=response_envelope,
-        conversation_action=trace.get("conversation_action"),
-        trace=trace,
+        background_tasks=background_tasks,
         channel_type=channel_type,
+        source_route="/chat",
         outbound_delivery_status="pending",
         telemetry_source=(
             "external_api"
@@ -2706,6 +2669,20 @@ async def _chat_v2(
         ),
         enforce_auto_reply_guard=True,
     )
+    try:
+        turn = (
+            await asyncio.wait_for(response_coro, timeout=timeout_seconds)
+            if timeout_seconds > 0
+            else await response_coro
+        )
+    except Exception:
+        db.rollback()
+        raise
+
+    trace = turn["trace"]
+    result = turn["result"]
+    response_envelope = turn.get("response_envelope")
+    persisted = turn["persisted"]
     if not persisted:
         return JSONResponse(
             status_code=409,

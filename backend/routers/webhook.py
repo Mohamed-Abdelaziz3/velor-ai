@@ -493,9 +493,8 @@ async def _process_meta_message_v2(
         cancel_persisted_auto_reply,
         current_auto_reply_block_reason,
         find_reply_for_inbound,
-        persist_v2_public_turn_atomic,
     )
-    from services.velor_chat_v2 import get_v2_ai_response
+    from services.v2_turn_use_case import execute_v2_turn
 
     if not external_message_id:
         logger.warning("Dropped Meta V2 message without a provider message id")
@@ -667,39 +666,27 @@ async def _process_meta_message_v2(
         return
 
     try:
-        result = await get_v2_ai_response(
+        turn = await execute_v2_turn(
             db=db,
-            source_message=inbound,
             company=company,
             lead=lead,
-            background_tasks=None,
-            channel_type="WHATSAPP_META",
-            source_route="/api/whatsapp/webhook",
-        )
-        trace = result["trace"]
-        response_envelope = result.get("response_envelope")
-        persisted = persist_v2_public_turn_atomic(
-            db=db,
+            source_message=inbound,
             company_id=company.company_id,
             lead_id=lead.id,
             user_id=phone,
             customer_text=text_body,
-            assistant_text=result["answer_text"],
             inbound_internal_id=inbound.internal_message_id,
             processing_claim_attempt=inbound.processing_attempts,
-            lead_update=trace.get("lead_to_save"),
-            decision=trace.get("action_decision"),
-            sales_snapshot=trace.get("sales_snapshot"),
-            objection_snapshot=trace.get("objection_snapshot"),
-            recommendation_decision=trace.get("recommendation_decision"),
-            response_envelope=response_envelope,
-            conversation_action=trace.get("conversation_action"),
-            trace=trace,
+            background_tasks=None,
             channel_type="WHATSAPP_META",
+            source_route="/api/whatsapp/webhook",
             outbound_delivery_status="pending",
             telemetry_source="meta_whatsapp",
             enforce_auto_reply_guard=True,
         )
+        result = turn["result"]
+        trace = turn["trace"]
+        persisted = turn["persisted"]
     except Exception as exc:
         db.rollback()
         logger.error(
